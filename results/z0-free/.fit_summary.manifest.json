@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "output_id": "fit_summary",
+  "universe_id": "z0-free",
+  "recipe": "python src/summarize.py --fit-params results/z0-free/fit_params.json --output results/z0-free/fit_summary.csv",
+  "definition_version": "sha256:a4dade15c0348f363933af71a7eab7a9642db6f7986cf5e735ab42c631a3ccbc",
+  "env_version": "sha256:5251d632a1324cd02186a0d88485c6f07b0b8bbf54760e1f1d57b15f44c6ecb5",
+  "data_version": "sha256:d4092e190693fc1f71aed0eeacdc2961b700934e98d00ee24eaa8204d9416d1a",
+  "decisions": {},
+  "input_versions": {
+    "fit_params": "sha256:ea6da4744e4e02e9f33a6c47ce542dee02ecc71479afe44404a0c19961e2d86b",
+    "summary_script": "sha256:c5a3e3bded30de19ac94d0c5c13778a6d37e447801f56ae8f5e17b3a5ac94479"
+  },
+  "git_sha": "f0a775c06cd85e30ac627e422e5bbf88d5e5edd2",
+  "git_remote": "git@github.com:gabrimaine/drop_lm.git",
+  "lc_version": "0.5.1",
+  "hermeticity": {
+    "mechanism": "landlock",
+    "fs": "declared",
+    "network": "allowed",
+    "landlock_abi": 5,
+    "exec_allowlist_version": 1
+  },
+  "started_at": "2026-11-27T13:29:51.559+00:00",
+  "finished_at": "2026-11-27T13:29:51.789+00:00",
+  "uv_version": "0.13.10",
+  "image": null
+}
