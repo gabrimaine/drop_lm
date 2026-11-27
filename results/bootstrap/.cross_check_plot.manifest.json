@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "output_id": "cross_check_plot",
+  "universe_id": "bootstrap",
+  "recipe": "python src/plot_cross_check.py --profile data/raw/td_reset2.xvg --fit-params results/bootstrap/fit_params.json --cross-check results/bootstrap/cross_check.csv --sampling-bias results/bootstrap/sampling_bias.csv --other-code data/raw/compare_fit.py --fit-range all --output results/bootstrap/cross_check_plot.png",
+  "definition_version": "sha256:414bc05f7fd571919bba3fc1f95b8525273e03ea102f729bb874c2b8f62012f2",
+  "env_version": "sha256:5251d632a1324cd02186a0d88485c6f07b0b8bbf54760e1f1d57b15f44c6ecb5",
+  "data_version": "sha256:5abb183574ac054e4f1814a382be465b5a02966b25051ae2f998aafee5c293e7",
+  "decisions": {
+    "fit_range": "all"
+  },
+  "input_versions": {
+    "profile": "sha256:b0dd20f8e97c9e373163b8c096434493890d72e5c57c03a711b5b2d481f7c220",
+    "fit_params": "sha256:b0cc03f0fe8c08e154fa96aea53f8c492c3827b8fbd47c9d0d9396f410a342fd",
+    "cross_check": "sha256:61accf8684743bf634966c4d3219e56595fd53bbc5d22ab5c89f5860dc18d1b8",
+    "sampling_bias": "sha256:16e62345fd1402f2a71e08c454749abf5e251001997c9eb0ac2283d95add8d8c",
+    "other_code": "sha256:a3c93f7926bd485dfa80479dca7fab54fb782628b50e067a4b9bfd5f5003e75a",
+    "lens_solver": "sha256:314bb49cb40792b3d9bdeebbeb2bdd76ac709acdd646d9c62f00cf3ce06e8f22",
+    "fitting_code": "sha256:d5aa76abc08d20a31350e70a86e5fbbb56a0799e4e11e72c4a2c6a44df1c3604",
+    "old_sampling": "sha256:215363c9b8ec0f51d8943ba2c7a2c6e64bbc02a9a64ebcafea9015a6c1e4123f",
+    "cross_check_plot_script": "sha256:4eae31903c8a9b4fbe031284fe3f85e784277f75255e8c3af8d03694cd8eb85f"
+  },
+  "git_sha": "fce16a8699cc3613e20005a27d6f99f29306e6e5",
+  "git_remote": "git@github.com:gabrimaine/drop_lm.git",
+  "lc_version": "0.5.1",
+  "hermeticity": {
+    "mechanism": "landlock",
+    "fs": "declared",
+    "network": "allowed",
+    "landlock_abi": 5,
+    "exec_allowlist_version": 1
+  },
+  "started_at": "2026-11-27T18:09:00.543+00:00",
+  "finished_at": "2026-11-27T18:09:06.714+00:00",
+  "uv_version": "0.13.10",
+  "image": null
+}
