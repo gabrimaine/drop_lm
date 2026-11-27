@@ -1,0 +1,7 @@
+id: r-le-40
+description: Baseline fitted only on r <= 40 nm, dropping the drifting far tail
+decisions:
+  temperature: t310
+  baseline: fixed
+  fit_range: r_le_40
+  uncertainty: jacobian

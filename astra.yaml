@@ -81,7 +81,8 @@ outputs:
         python {inputs.fit_script} --profile {inputs.profile} --kappa-kT 6
         --temperature {decisions.temperature} --baseline {decisions.baseline}
         --fit-range {decisions.fit_range} --uncertainty {decisions.uncertainty}
-        --output {output}
+        --procs 16 --output {output}
+      resources: {cpus: 16, memory: 8Gi}
 
   - id: fit_profile
     type: table

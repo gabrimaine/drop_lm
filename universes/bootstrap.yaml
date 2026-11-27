@@ -1,0 +1,7 @@
+id: bootstrap
+description: Baseline with iid residual-bootstrap uncertainties (200 refits)
+decisions:
+  temperature: t310
+  baseline: fixed
+  fit_range: all
+  uncertainty: residual_bootstrap

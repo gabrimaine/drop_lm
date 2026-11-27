@@ -5,6 +5,8 @@ Writes one JSON with best-fit physical parameters and their uncertainties.
 import argparse
 import json
 import sys
+from concurrent.futures import ProcessPoolExecutor
+from functools import partial
 from pathlib import Path
 
 import numpy as np
@@ -18,6 +20,14 @@ KEYS = ["V_nm3", "gamma_ratio", "gamma_m_mN_per_m", "gamma_b_mN_per_m",
         "delta_gamma_mN_per_m", "R_nm", "h_nm", "lambda_nm"]
 
 
+def _refit(zb, r, theta, kappa, free_baseline):
+    """One bootstrap refit, warm-started at the best fit; None if no lens is found."""
+    mb = LensModel(r, zb, free_baseline=free_baseline)
+    rb = fit(mb, theta0=theta)
+    d = derived(mb, rb.x, kappa)
+    return None if d is None else [d[kk] for kk in KEYS]
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--profile", required=True)
@@ -29,6 +39,7 @@ def main():
     ap.add_argument("--uncertainty", required=True, choices=["jacobian", "residual_bootstrap"])
     ap.add_argument("--n-boot", type=int, default=200)
     ap.add_argument("--seed", type=int, default=12345)
+    ap.add_argument("--procs", type=int, default=1, help="worker processes for the bootstrap")
     args = ap.parse_args()
 
     T = TEMPERATURES[args.temperature]
@@ -55,17 +66,18 @@ def main():
         unc["note"] = ("Gaussian errors from the Jacobian with sigma_z^2 = SSR/(N-k); "
                        "residuals of a profile are correlated, so treat as a lower bound.")
     else:
+        # Resamples are drawn up front, in the same order a serial loop would draw
+        # them, so the result does not depend on --procs.
         rng = np.random.default_rng(args.seed)
         zfit = z + resid
-        samples = []
-        for b in range(args.n_boot):
-            zb = zfit + rng.choice(resid, size=N, replace=True)
-            mb = LensModel(r, zb, free_baseline=model.free_baseline)
-            rb = fit(mb, theta0=theta)
-            d = derived(mb, rb.x, kappa)
-            if d is not None:
-                samples.append([d[kk] for kk in KEYS])
-        S = np.array(samples)
+        zbs = [zfit + rng.choice(resid, size=N, replace=True) for _ in range(args.n_boot)]
+        job = partial(_refit, r=r, theta=theta, kappa=kappa, free_baseline=model.free_baseline)
+        if args.procs > 1:
+            with ProcessPoolExecutor(max_workers=args.procs) as ex:
+                results = list(ex.map(job, zbs))
+        else:
+            results = [job(zb) for zb in zbs]
+        S = np.array([row for row in results if row is not None])
         unc["n_boot_ok"] = len(S)
         unc["sigma"] = dict(zip(KEYS, S.std(axis=0, ddof=1).tolist()))
         unc["percentile_16_84"] = {kk: np.percentile(S[:, i], [16, 84]).tolist() for i, kk in enumerate(KEYS)}

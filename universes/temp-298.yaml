@@ -1,0 +1,7 @@
+id: temp-298
+description: Baseline with kappa_m = 6 kBT converted at 298.15 K instead of 310 K
+decisions:
+  temperature: t298
+  baseline: fixed
+  fit_range: all
+  uncertainty: jacobian

@@ -1,0 +1,7 @@
+id: z0-free
+description: Baseline with a free vertical offset z0 for the bilayer plane
+decisions:
+  temperature: t310
+  baseline: free
+  fit_range: all
+  uncertainty: jacobian
