@@ -17,7 +17,9 @@ correlations (compare_fit.py adds the lambda and delta terms of gamma_b in
 quadrature, which drops their correlation). The rows pressure and
 apex_curvature are the two shooting variables, p lambda^3 / kappa_m and the apex
 curvature times lambda; with lambda and gamma_b/gamma_m they rebuild either
-shape exactly.
+shape exactly. model_diff_max is the largest |their model - our model| over
+the data radii, each at its own best fit; max_abs_diff_sigma is the largest
+|diff_sigma| in the table.
 """
 import argparse
 import csv
@@ -32,7 +34,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent))
 from fitting import TEMPERATURES, load_profile  # noqa: E402
-from lens import KB  # noqa: E402
+from lens import KB, lens, profile_on_grid  # noqa: E402
 
 C = None  # the independent module, loaded in each process by _load
 
@@ -115,6 +117,9 @@ def main():
     lam_o = b["lambda_nm"]
     P_ours = b["p_bar"] * 1e5 * (lam_o * 1e-9) ** 3 / kappa  # p lambda^3 / kappa_m
     a_ours = b["apex_curvature_inv_nm"] * lam_o
+    sh, _ = lens(math.exp(ours["theta"]["ln_a"]), ours["theta"]["g"])
+    z_ours = profile_on_grid(sh, math.exp(ours["theta"]["ln_lambda_nm"]), r)
+    model_diff = float(np.abs(C.model_z(prof, r) - z_ours).max())
     # quantity, label, unit, ours, ours_std, other, other_std
     rows = [
         ("V", "Droplet volume", "nm^3", b["V_nm3"], s["V_nm3"], out["V"], sig["sig_V"]),
@@ -148,6 +153,11 @@ def main():
             sf = full.get(qid)
             w.writerow([qid, label, repr(float(vo)), _fmt(so), repr(float(vt)), _fmt(st),
                         _fmt(sf), _fmt(d), unit])
+        dmax = max(abs((vt - vo) / so) for _, _, _, vo, so, vt, _ in rows if so)
+        w.writerow(["model_diff_max", "Largest difference between the two best-fit models", "", "",
+                    repr(1e3 * model_diff), "", "", "", "pm"])
+        w.writerow(["max_abs_diff_sigma", "Largest |diff_sigma| above", "", "", repr(float(dmax)),
+                    "", "", "", ""])
 
 
 if __name__ == "__main__":

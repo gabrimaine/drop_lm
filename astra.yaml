@@ -172,7 +172,7 @@ outputs:
       with both values, both 1-sigma errors (the independent one as it reports
       it and with all correlations) and their difference in units of our
       sigma; plus both codes' reduced pressure and apex curvature.
-    inputs: [profile, fit_params, other_code, cross_check_script]
+    inputs: [profile, fit_params, other_code, lens_solver, fitting_code, cross_check_script]
     decisions: [temperature, baseline, fit_range]
     recipe:
       command: >-
@@ -505,8 +505,8 @@ findings:
       the same best fit. Every fitted and derived quantity agrees to within
       0.01 of our quoted 1-sigma error, in every universe, and the two best-fit
       models differ by less than 0.01 pm at every data point. With the
-      correlations between its parameters included, its error bars match ours
-      to better than 1 %.
+      correlations between its parameters included, its error bars match our
+      Jacobian errors to about 1 %.
     created_at: "2026-11-27T18:00:00Z"
     evidence:
       - id: comparison
@@ -531,10 +531,12 @@ findings:
     claim: >-
       Before fae3bc2 our solver read the model height off a contour sampled
       every 0.05 lambda_m. The resulting interpolation error, at most 0.7 pm
-      against residuals of 8 pm, moved the best-fit tensions, lambda_m and R
-      by about 0.4 of their quoted sigma, and the tension ratio by about 0.3
-      sigma. Rerunning the old fit reproduces the archived pre-fix values
-      exactly; the independent code agrees with the fixed fit, not the old one.
+      against residuals of 8 pm, moved the baseline best-fit tensions,
+      lambda_m and R by about 0.4 of their quoted sigma, and the tension ratio
+      by about 0.3 sigma; with a free bilayer plane the shift is about 0.25
+      sigma, in the opposite direction. Rerunning the old fit reproduces the
+      archived pre-fix values exactly, and the independent code agrees with
+      the fixed fit, not the old one.
     created_at: "2026-11-27T21:00:00Z"
     evidence:
       - id: bias
