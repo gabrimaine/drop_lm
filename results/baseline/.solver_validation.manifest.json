@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "output_id": "solver_validation",
+  "universe_id": "baseline",
+  "recipe": "python src/validate_solver.py --g-values 0.1,1.0 --output results/baseline/solver_validation.png",
+  "definition_version": "sha256:15290d9ce7f7f8c347e5c8b797da1a2bf9070dd8cc75bc9a4d93035f307834a8",
+  "env_version": "sha256:5251d632a1324cd02186a0d88485c6f07b0b8bbf54760e1f1d57b15f44c6ecb5",
+  "data_version": "sha256:71e8f6679be651e7a98a294a396ec16a3e69966fb7838fb2c788c906cdbf6663",
+  "decisions": {},
+  "input_versions": {
+    "lens_solver": "sha256:be9e021d0fda4e52d73f73251321a2d81f701f5cb8149bf6306ea5fcd98bb12f",
+    "validate_script": "sha256:b1ba8e753d1b8ed429c8807e3837e739f9f8adaab8370e6ad002478244b97864"
+  },
+  "git_sha": "ad2a1022595f741a0f67544c94b1bdc2fb0596ec",
+  "git_remote": "git@github.com:gabrimaine/drop_lm.git",
+  "lc_version": "0.5.1",
+  "hermeticity": {
+    "mechanism": "landlock",
+    "fs": "declared",
+    "network": "allowed",
+    "landlock_abi": 5,
+    "exec_allowlist_version": 1
+  },
+  "started_at": "2026-11-27T11:51:33.940+00:00",
+  "finished_at": "2026-11-27T11:51:55.176+00:00",
+  "uv_version": "0.13.10",
+  "image": null
+}
