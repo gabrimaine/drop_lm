@@ -1,16 +1,27 @@
 # MyST configuration for the analysis report (https://mystmd.org/).
 # The MySTRA plugin resolves {astra}`...` references against astra.yaml.
-# `latest` always tracks the newest MySTRA release; for a reproducible
-# build, pin a tag instead, e.g. .../releases/download/v0.0.1/mystra.mjs
+# Both MySTRA and the ASTRA article theme are pinned so the report builds the
+# same way later. MySTRA v0.0.8 reads ASTRA spec 0.0.14, which is what
+# astra.yaml declares; MySTRA 0.1.x needs an ASTRA 0.1 spec.
 version: 1
 project:
+  title: Fitting a lipid-droplet lens with the Deslandes-Thiam-Foret model
+  authors:
+    - name: Gabriele Mainetti
+      affiliations:
+        - SLAC National Accelerator Laboratory
+  github: https://github.com/gabrimaine/drop_lm
+  bibliography:
+    - references.bib
   plugins:
-    - https://github.com/LightconeResearch/MySTRA/releases/latest/download/mystra.mjs
+    - https://github.com/LightconeResearch/MySTRA/releases/download/v0.0.8/mystra.mjs
   toc:
     - file: index.md
+  exclude:
+    - README.md
+    - results/README.md
 site:
-  # ASTRA article theme: renders the MySTRA references richly. This URL tracks
-  # the newest release (MyST caches it under _build/templates/; run
-  # `myst clean --templates` to refresh). To pin one, use a tag's archive, e.g.
-  # https://github.com/LightconeResearch/astra-article-theme/archive/refs/tags/v0.0.15.zip
-  template: https://github.com/LightconeResearch/astra-article-theme.git
+  # ASTRA article theme, pinned to v0.0.16 (the last release before MySTRA 0.1).
+  # MyST caches it under _build/templates/; run `myst clean --templates` after
+  # changing this line.
+  template: https://github.com/LightconeResearch/astra-article-theme/archive/refs/tags/v0.0.16.zip

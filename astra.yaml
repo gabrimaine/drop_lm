@@ -161,10 +161,12 @@ decisions:
   fit_range:
     label: Radial range included in the fit
     rationale: >-
-      Beyond the contact line the model is exactly flat; the far tail (r >
-      40 nm) shows a slow drift down to -0.03 nm that is not droplet shape.
-      Keeping all points constrains R through the flat region; the cut
-      tests sensitivity to the tail.
+      Beyond the contact line the model is exactly flat. Points just outside
+      it constrain R. Points far outside it do not depend on the shape
+      parameters: with the plane fixed they only add to the rms, and with a
+      free offset they pin z0. The far tail (r > 40 nm) drifts slowly down
+      to -0.03 nm, which is not droplet shape. The cut tests whether that
+      drift biases the fit.
     default: all
     options:
       all: { label: All points (r up to 54 nm) }
@@ -342,10 +344,11 @@ findings:
   solver_validated:
     label: Solver validated
     claim: >-
-      The shooting solver reproduces the paper's small-volume formulas
-      (Eqs. 31-34) as V/lambda^3 -> 0 and the large-volume contact angle
-      (Eq. 40) as V/lambda^3 grows, for gamma_b/gamma_m = 0.1 and 1. The
-      Hamiltonian of Eq. 19 is conserved along the contour.
+      For gamma_b/gamma_m = 0.1 and 1, the shooting solver converges onto the
+      paper's small-volume formulas (Eqs. 31-34) as V/lambda^3 -> 0. As
+      V/lambda^3 grows, its shapes approach spherical caps and its apparent
+      cap angle approaches Eq. 40. The Hamiltonian of Eq. 19 is conserved
+      along the contour to solver precision.
     created_at: "2026-11-27T13:30:00Z"
     evidence:
       - id: validation
@@ -356,8 +359,9 @@ findings:
     label: Model fits the profile
     claim: >-
       The symmetric lens model, with three free parameters, describes the
-      measured profile to a few-picometre rms residual over the whole radial
-      range, including the flat bilayer beyond the contact line.
+      measured profile over the whole radial range, including the flat
+      bilayer beyond the contact line. The rms residual is below 0.1 % of
+      the lens thickness.
     created_at: "2026-11-27T13:30:00Z"
     evidence:
       - id: plot
@@ -365,6 +369,11 @@ findings:
       - id: params
         artifact: fit_summary
     scope: Up-down symmetric lens, flat bilayer, kappa_m = 6 kBT, tau = C0 = 0.
+    notes: >-
+      The residuals are not white. They oscillate slowly along r and dip just
+      outside the contact line, where the model has a kink in curvature and
+      the data is smoothed. Uncertainties that assume independent residuals
+      are therefore optimistic.
     tags: [result]
 
   tensions_separable:
@@ -384,14 +393,16 @@ findings:
     notes: >-
       The absolute tensions scale with the assumed kappa_m (they are
       kappa_m / lambda_m^2 times dimensionless numbers). The volume and the
-      ratio gamma_b/gamma_m do not depend on it.
+      ratio gamma_b/gamma_m do not depend on it. The valley is elongated
+      along gamma_m at nearly fixed gamma_b/gamma_m, so the ratio is
+      determined far more sharply than either tension.
     tags: [result, identifiability]
 
   robust_to_choices:
     label: Robust to analysis choices
     claim: >-
       Each one-change universe (temperature, free baseline, fit range,
-      bootstrap errors) moves V and gamma_b/gamma_m by less than 0.1 %.
+      bootstrap errors) moves V and gamma_b/gamma_m by about 0.1 % or less.
       The tensions move by about 1 % with a free baseline (comparable to the
       statistical error) and by the ratio of temperatures when kappa_m is
       converted at 298 K.
