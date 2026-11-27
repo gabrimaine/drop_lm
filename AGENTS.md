@@ -28,6 +28,12 @@ uvx astra-tools@0.2.18 validate           # after any spec edit
 - `lens.shoot(dense=True)` samples the DOP853 dense output at 4001 points. The old
   max_step=0.05 sampling gave up to 0.7 pm interpolation error and a 0.4 sigma tension bias,
   found by the cross-check (fixed in fae3bc2).
+- `src/old_sampling.py` keeps that old sampler line for line; `sampling_bias.py` reruns the
+  old fit with it (reproduces the archived pre-fix baseline exactly: +0.38 sigma on the
+  tensions; -0.25 sigma with free z0). `plot_cross_check.py` rebuilds both codes' shapes from
+  the cross_check rows (lambda, ratio, pressure, apex_curvature); nothing is refitted there.
+- compare_fit's gamma_b error drops the lambda-ratio correlation; `other_std_full` in
+  cross_check.csv propagates its covariance properly and matches ours to ~1 %.
 
 ## Project Notes
 

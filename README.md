@@ -108,7 +108,7 @@ references.bib      its bibliography
 AGENTS.md           working notes for the AI assistant that built this
 ```
 
-Each universe directory contains the same seven outputs:
+Each universe directory contains the same nine outputs:
 
 | File | What it is |
 |---|---|
@@ -118,7 +118,9 @@ Each universe directory contains the same seven outputs:
 | `fit_profile.csv` | The best-fit model contour: columns `s_nm, r_nm, z_nm, psi_deg, dpsi_ds_inv_nm, is_bilayer` (arclength, position, tangent angle, curvature; `is_bilayer = 1` marks the flat bilayer beyond the contact line). |
 | `identifiability.png` | χ² map over (γ_m, γ_b/γ_m): shows that this profile constrains *both* tensions, not just a combination of them. |
 | `solver_validation.png` | Checks of the shape solver against the paper's analytic small- and large-volume limits. It doesn't depend on the data, so it's identical in every universe. |
-| `cross_check.csv` | The profile refitted by the independent code `data/raw/compare_fit.py`, next to our fit: for each quantity both values, both 1σ errors, and the difference in units of our σ. |
+| `cross_check.csv` | The profile refitted by the independent code `data/raw/compare_fit.py`, next to our fit: for each quantity both values, both 1σ errors (the independent one as it reports it, `other_std`, and with all correlations, `other_std_full`), and the difference in units of our σ. Also both codes' reduced pressure and apex curvature, and the largest difference between the two models. |
+| `sampling_bias.csv` | Our fit rerun with the contour sampling used before commit `fae3bc2` (every 0.05 λ_m), next to the current fit: the bias that the cross-check found, in units of our σ. |
+| `cross_check_plot.png` | Both codes' fits on the data, their residuals, the distance between the two models, the differences in σ (now and with the old sampling), and the error-bar ratios. |
 
 Next to each output there is a hidden `.<output>.manifest.json`: the run
 record (exact command, decisions, git commit, input checksums, timestamps).
@@ -142,7 +144,10 @@ file** buttons (top right of the file).
 | [`src/validate_solver.py`](src/validate_solver.py) | Solver against the SI's analytic limits | `solver_validation` |
 | [`src/summarize.py`](src/summarize.py) | Flattens the fit into one row per quantity | `fit_summary` |
 | [`src/cross_check.py`](src/cross_check.py) | Refits with the independent code and tabulates both | `cross_check` |
-| [`data/raw/compare_fit.py`](data/raw/compare_fit.py) | Independent implementation of the same fit (standalone; `python data/raw/compare_fit.py --test` runs its self-tests) | used by `cross_check` |
+| [`src/old_sampling.py`](src/old_sampling.py) | The contour sampling used before the fix, kept to measure its bias | used by `sampling_bias`, `cross_check_plot` |
+| [`src/sampling_bias.py`](src/sampling_bias.py) | Reruns the fit with the old sampling and tabulates the shifts | `sampling_bias` |
+| [`src/plot_cross_check.py`](src/plot_cross_check.py) | Comparison figure for the two codes | `cross_check_plot` |
+| [`data/raw/compare_fit.py`](data/raw/compare_fit.py) | Independent implementation of the same fit (standalone; `python data/raw/compare_fit.py --test` runs its self-tests) | used by `cross_check`, `cross_check_plot` |
 
 The exact command that runs each script is in [`astra.yaml`](astra.yaml).
 Two caveats on the ZIP: the repository is private, so only collaborators can
@@ -353,8 +358,11 @@ pinned in `myst.yml` and downloaded on the first build. Run `myst build`
 The report shows the first universe in `universes/` (`baseline`). The section
 "Changing the analysis choices" has one tab per universe with that
 universe's own fit plot. Neither the report nor `lc view` can switch
-decisions in the page. The section "Independent cross-check" compares the fit
-with `data/raw/compare_fit.py`, and the last section, "Code", shows and links
+decisions in the page. The section "Comparison with an independent
+implementation" compares the fit with `data/raw/compare_fit.py`: how the two
+codes differ, the side-by-side numbers and figure, why one error bar differs,
+the sampling bias the comparison caught, and one tab per universe. The last
+section, "Code", shows and links
 every script. For any other combination, add a universe (Section 6)
 and look in `results/<universe>/`.
 
