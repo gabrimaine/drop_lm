@@ -57,6 +57,17 @@ inputs:
   - id: summary_script
     type: data
     source: src/summarize.py
+  - id: other_code
+    type: data
+    label: independent fit code
+    source: data/raw/compare_fit.py
+    description: >-
+      A separately written fit of the same model (shooting on the apex
+      curvature, parameters lambda, 2 - gamma_b/gamma_m and reduced pressure),
+      used only to cross-check fit_params.
+  - id: cross_check_script
+    type: data
+    source: src/cross_check.py
 
 outputs:
   - id: solver_validation
@@ -135,6 +146,24 @@ outputs:
     decisions: []
     recipe:
       command: python {inputs.summary_script} --fit-params {inputs.fit_params} --output {output}
+
+  - id: cross_check
+    type: table
+    format: csv
+    description: >-
+      The profile refitted by the independent code (other_code) from its own
+      starting guesses, side by side with fit_params: one row per quantity
+      with both values, both 1-sigma errors and their difference in units of
+      our sigma.
+    inputs: [profile, fit_params, other_code, cross_check_script]
+    decisions: [temperature, baseline, fit_range]
+    recipe:
+      command: >-
+        python {inputs.cross_check_script} --profile {inputs.profile}
+        --fit-params {inputs.fit_params} --other-code {inputs.other_code}
+        --kappa-kT 6 --temperature {decisions.temperature} --baseline {decisions.baseline}
+        --fit-range {decisions.fit_range} --procs 5 --output {output}
+      resources: {cpus: 5, memory: 4Gi}
 
 decisions:
   temperature:

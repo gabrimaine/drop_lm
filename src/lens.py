@@ -81,8 +81,15 @@ class Shape:
         return 0.5 * r * (u**2 - (np.sin(psi) / r) ** 2) - r + 0.5 * P * r**2 * np.sin(psi) + t * np.cos(psi)
 
 
-def shoot(a, P, s_max=200.0, dense=False, rtol=1e-10, atol=1e-12):
-    """Integrate from the axis until psi returns to 0 (contact line)."""
+def shoot(a, P, s_max=200.0, dense=False, rtol=1e-10, atol=1e-12, n_dense=4001):
+    """Integrate from the axis until psi returns to 0 (contact line).
+
+    With dense=True the contour is sampled at n_dense points evenly spaced in s
+    from the integrator's own continuous solution, so that linear interpolation
+    in profile_on_grid is accurate to ~1e-7 lambda. (A fixed 0.05-lambda step
+    gave interpolation errors up to ~2.5e-4 lambda, about 0.7 pm here, which is
+    8 % of the fit residual; found by cross-checking with data/raw/compare_fit.py.)
+    """
 
     def contact(s, y, P):
         return y[2]
@@ -104,10 +111,14 @@ def shoot(a, P, s_max=200.0, dense=False, rtol=1e-10, atol=1e-12):
     y0 = axis_start(a, P)
     sol = solve_ivp(rhs, (y0[0], s_max), y0, args=(P,), method="DOP853",
                     rtol=rtol, atol=atol, events=(contact, overturn, axis_hit),
-                    dense_output=False, max_step=0.05 if dense else np.inf)
+                    dense_output=dense)
     ok = sol.status == 1 and len(sol.t_events[0]) > 0
     s, Y = sol.t, sol.y
-    if ok:  # replace last point by the exact event state
+    if ok and dense:  # even sampling of the continuous solution, ending on the event
+        s = np.linspace(y0[0], sol.t_events[0][0], n_dense)
+        Y = sol.sol(s)
+        Y[:, -1] = sol.y_events[0][0]
+    elif ok:  # replace last point by the exact event state
         s = np.append(s[:-1], sol.t_events[0][0])
         Y = np.column_stack([Y[:, :-1], sol.y_events[0][0]])
     z = Y[1] - Y[1, -1]
