@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "output_id": "cross_check",
+  "universe_id": "temp-298",
+  "recipe": "python src/cross_check.py --profile data/raw/td_reset2.xvg --fit-params results/temp-298/fit_params.json --other-code data/raw/compare_fit.py --kappa-kT 6 --temperature t298 --baseline fixed --fit-range all --procs 5 --output results/temp-298/cross_check.csv",
+  "definition_version": "sha256:b366b56eeec54868e7b3064be1b450f19a08446bf685d64ef9b4af6319747e78",
+  "env_version": "sha256:5251d632a1324cd02186a0d88485c6f07b0b8bbf54760e1f1d57b15f44c6ecb5",
+  "data_version": "sha256:475b066ab72f9b58c249e2cf4bffbfa8de0da448f37d1bda34a2fc61a10a3282",
+  "decisions": {
+    "temperature": "t298",
+    "baseline": "fixed",
+    "fit_range": "all"
+  },
+  "input_versions": {
+    "profile": "sha256:b0dd20f8e97c9e373163b8c096434493890d72e5c57c03a711b5b2d481f7c220",
+    "fit_params": "sha256:73b380cff29fa10803ada2f737e5bc2eee211efe7218ec7ada8d68ad17751443",
+    "other_code": "sha256:a3c93f7926bd485dfa80479dca7fab54fb782628b50e067a4b9bfd5f5003e75a",
+    "cross_check_script": "sha256:3013fe1de170e33c4e44ce554547466ba4393d6b31164e9970d6704dc37af5eb"
+  },
+  "git_sha": "fae3bc21706208bae440814875011faece509403",
+  "git_remote": "git@github.com:gabrimaine/drop_lm.git",
+  "lc_version": "0.5.1",
+  "hermeticity": {
+    "mechanism": "landlock",
+    "fs": "declared",
+    "network": "allowed",
+    "landlock_abi": 5,
+    "exec_allowlist_version": 1
+  },
+  "started_at": "2026-11-27T17:40:21.457+00:00",
+  "finished_at": "2026-11-27T17:43:06.374+00:00",
+  "uv_version": "0.13.10",
+  "image": null
+}
