@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "output_id": "fit_summary",
+  "universe_id": "r-le-40",
+  "recipe": "python src/summarize.py --fit-params results/r-le-40/fit_params.json --output results/r-le-40/fit_summary.csv",
+  "definition_version": "sha256:0f76e4fa7400b117e4452723c32e45380570bcaa62a88f1bff6f7ee91744381f",
+  "env_version": "sha256:5251d632a1324cd02186a0d88485c6f07b0b8bbf54760e1f1d57b15f44c6ecb5",
+  "data_version": "sha256:4174314ef7348fe6494205090b3408cd5900604723568a7f908298631b768ca3",
+  "decisions": {},
+  "input_versions": {
+    "fit_params": "sha256:807e6581d351c27d8722ea237eab9e3b9f5e244342b43654ee846385dd215162",
+    "summary_script": "sha256:c5a3e3bded30de19ac94d0c5c13778a6d37e447801f56ae8f5e17b3a5ac94479"
+  },
+  "git_sha": "f0a775c06cd85e30ac627e422e5bbf88d5e5edd2",
+  "git_remote": "git@github.com:gabrimaine/drop_lm.git",
+  "lc_version": "0.5.1",
+  "hermeticity": {
+    "mechanism": "landlock",
+    "fs": "declared",
+    "network": "allowed",
+    "landlock_abi": 5,
+    "exec_allowlist_version": 1
+  },
+  "started_at": "2026-11-27T13:29:51.553+00:00",
+  "finished_at": "2026-11-27T13:29:51.780+00:00",
+  "uv_version": "0.13.10",
+  "image": null
+}
