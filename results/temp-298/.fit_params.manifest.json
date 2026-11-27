@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "output_id": "fit_params",
+  "universe_id": "temp-298",
+  "recipe": "python src/fit.py --profile data/raw/td_reset2.xvg --kappa-kT 6 --temperature t298 --baseline fixed --fit-range all --uncertainty jacobian --procs 16 --output results/temp-298/fit_params.json",
+  "definition_version": "sha256:3bc4c02fe6d625d1b45949cf66a14a88fe4f867b62db99353cd9e3da8ad0c037",
+  "env_version": "sha256:5251d632a1324cd02186a0d88485c6f07b0b8bbf54760e1f1d57b15f44c6ecb5",
+  "data_version": "sha256:83243b60d26cfa8dc52710c32a7da62a056780d325c0d7221e86bc1e43c2d3bc",
+  "decisions": {
+    "temperature": "t298",
+    "baseline": "fixed",
+    "fit_range": "all",
+    "uncertainty": "jacobian"
+  },
+  "input_versions": {
+    "profile": "sha256:b0dd20f8e97c9e373163b8c096434493890d72e5c57c03a711b5b2d481f7c220",
+    "lens_solver": "sha256:be9e021d0fda4e52d73f73251321a2d81f701f5cb8149bf6306ea5fcd98bb12f",
+    "fitting_code": "sha256:d5aa76abc08d20a31350e70a86e5fbbb56a0799e4e11e72c4a2c6a44df1c3604",
+    "fit_script": "sha256:506e7912f4e445ef69c0eb5ad88d5dbe6c38a4a261bddd844527b6543e2ccf3b"
+  },
+  "git_sha": "ce2556d9eb00107cab29c3da2cc5e562af7932af",
+  "git_remote": "git@github.com:gabrimaine/drop_lm.git",
+  "lc_version": "0.5.1",
+  "hermeticity": {
+    "mechanism": "landlock",
+    "fs": "declared",
+    "network": "allowed",
+    "landlock_abi": 5,
+    "exec_allowlist_version": 1
+  },
+  "started_at": "2026-11-27T13:04:12.005+00:00",
+  "finished_at": "2026-11-27T13:05:07.444+00:00",
+  "uv_version": "0.13.10",
+  "image": null
+}
