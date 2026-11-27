@@ -12,7 +12,7 @@
   "input_versions": {
     "profile": "sha256:b0dd20f8e97c9e373163b8c096434493890d72e5c57c03a711b5b2d481f7c220",
     "fit_params": "sha256:c20b48441977bf608d1d734b92e0851d96bd14a8f1db0157c92d9e7863a4aca9",
-    "cross_check": "sha256:3de74e7ff102fc9d75c87d12590d29a483fcf7dc7a6c29f3cdf6aed080a3cb6b",
+    "cross_check": "sha256:7331369cfe293605529f1f2b8b31803967fc8071b4539fcefef92de0d6a49d13",
     "sampling_bias": "sha256:c17410ac08eefaa8b439fca0af027a6abe0bcf2e222aa5697162cbb568b0cf19",
     "other_code": "sha256:a3c93f7926bd485dfa80479dca7fab54fb782628b50e067a4b9bfd5f5003e75a",
     "lens_solver": "sha256:314bb49cb40792b3d9bdeebbeb2bdd76ac709acdd646d9c62f00cf3ce06e8f22",
@@ -20,7 +20,7 @@
     "old_sampling": "sha256:215363c9b8ec0f51d8943ba2c7a2c6e64bbc02a9a64ebcafea9015a6c1e4123f",
     "cross_check_plot_script": "sha256:4eae31903c8a9b4fbe031284fe3f85e784277f75255e8c3af8d03694cd8eb85f"
   },
-  "git_sha": "fce16a8699cc3613e20005a27d6f99f29306e6e5",
+  "git_sha": "44c49e90d7ad6623fa10237b1232c9ac5c935731",
   "git_remote": "git@github.com:gabrimaine/drop_lm.git",
   "lc_version": "0.5.1",
   "hermeticity": {
@@ -30,8 +30,8 @@
     "landlock_abi": 5,
     "exec_allowlist_version": 1
   },
-  "started_at": "2026-11-27T18:08:49.092+00:00",
-  "finished_at": "2026-11-27T18:08:55.190+00:00",
+  "started_at": "2026-11-27T18:12:56.222+00:00",
+  "finished_at": "2026-11-27T18:13:02.358+00:00",
   "uv_version": "0.13.10",
   "image": null
 }
