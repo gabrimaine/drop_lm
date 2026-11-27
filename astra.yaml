@@ -432,7 +432,7 @@ findings:
     claim: >-
       Each one-change universe (temperature, free baseline, fit range,
       bootstrap errors) moves V and gamma_b/gamma_m by about 0.1 % or less.
-      The tensions move by about 1 % with a free baseline (comparable to the
+      The tensions move by about 0.5 % with a free baseline (half the quoted
       statistical error) and by the ratio of temperatures when kappa_m is
       converted at 298 K.
     created_at: "2026-11-27T13:30:00Z"
@@ -444,3 +444,27 @@ findings:
       bounds. The free-baseline shift is the better guide to the systematic
       uncertainty of the tensions.
     tags: [result, robustness]
+
+  independent_reproduction:
+    label: Reproduced by independent code
+    claim: >-
+      A separately written implementation of the same model, with its own
+      shooting variable, parametrisation and starting guesses, converges to
+      the same best fit. Every fitted and derived quantity agrees to within
+      0.01 of our quoted 1-sigma error, in every universe.
+    created_at: "2026-11-27T18:00:00Z"
+    evidence:
+      - id: comparison
+        artifact: cross_check
+    scope: >-
+      Both codes implement the symmetric model with the 1/2 in the
+      contact-line tension (see contact_tension_factor), so the check does
+      not test that reading of the Supporting Material.
+    notes: >-
+      The first comparison, before fae3bc2, found differences of 0.3-0.4
+      sigma. They came from our solver sampling the contour every 0.05 lambda
+      and interpolating linearly, an error of up to 0.7 pm; it now samples the
+      integrator's continuous solution. The independent code's gamma_b error
+      ignores the correlation between its parameters and is about 10 %
+      smaller than ours.
+    tags: [method, result]

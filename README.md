@@ -20,6 +20,60 @@ record of how each result was made) is in this repository.
 > to *recompute* them, or to browse them in its viewer. Sections 2–3 are enough
 > to explore; Sections 5–6 explain how to rerun.
 
+## Quick start: read the report with MyST
+
+The report is `index.md`, rendered with [MyST](https://mystmd.org). Every number
+and figure in it is read from `results/` when the page is built, so the result
+files must be downloaded first.
+
+**Step 1: install the tools (once)**
+- Node.js 20 or newer: `brew install node` (macOS), or from https://nodejs.org
+- MyST CLI: `npm install -g mystmd`
+- git-annex: `brew install git-annex` (macOS) or `apt install git-annex`
+
+**Step 2: clone and download the results**
+```bash
+git clone git@github.com:gabrimaine/drop_lm.git
+cd drop_lm
+git annex init                      # once per clone
+git annex enableremote github-lfs   # connect to the file storage on GitHub
+git annex get results/ data/        # without this the figures are broken images
+```
+
+**Step 3: start the preview**
+```bash
+myst start
+```
+The first run downloads the pinned plugin (MySTRA v0.0.8) and theme
+(astra-article-theme v0.0.16), which takes a minute. When it is ready it prints
+`👉 http://localhost:3000 👈` (or the next free port).
+
+**Step 4: open the printed URL in your browser.**
+
+*Running on a remote machine (e.g. S3DF)?* Forward **both** ports: the page is
+served on the printed port (3000) and the images on 3100.
+```bash
+ssh -L 3000:localhost:3000 -L 3100:localhost:3100 <remote-host>
+```
+
+**Step 5: switch between analysis choices.** Go to the section **"Changing
+the analysis choices"** and click the **tabs** (Baseline, 298 K, Free
+baseline, r ≤ 40 nm, Bootstrap). The decision boxes higher up (e.g.
+"Temperature: 310 K / 298.15 K") are display-only; clicking them does nothing.
+
+**Step 6: look at the code.** The last section of the report, **"Code"**, lists
+every script. Click a file name to open it as plain text in a new tab (and save
+it from there), or expand its box to read it in the page. On GitHub, see
+[The code](#the-code) below.
+
+**Static version (optional)**
+```bash
+myst build --html
+cd _build/html && python3 -m http.server 8000   # then open http://localhost:8000
+```
+Don't open `_build/html/index.html` by double-clicking it. The page needs a
+web server: from a `file://` URL nothing loads and the tabs do not work.
+
 ---
 
 ## Contents
@@ -45,7 +99,8 @@ astra.yaml          the analysis specification: inputs, outputs, decisions,
 universes/          one YAML file per combination of decisions ("universe")
 results/<universe>/ the outputs of each universe (see table below)
 src/                the Python code (solver, fit, plots)
-data/raw/           the measured profile (td_reset2.xvg) and the paper (PDF)
+data/raw/           the measured profile (td_reset2.xvg), the paper (PDF), and
+                    compare_fit.py, an independent fit used for cross-checking
 pyproject.toml,     the Python environment (numpy, scipy, matplotlib),
 uv.lock             pinned exactly
 index.md, myst.yml  the report, written as a short paper (MyST); see Section 5
@@ -53,7 +108,7 @@ references.bib      its bibliography
 AGENTS.md           working notes for the AI assistant that built this
 ```
 
-Each universe directory contains the same six outputs:
+Each universe directory contains the same seven outputs:
 
 | File | What it is |
 |---|---|
@@ -63,9 +118,36 @@ Each universe directory contains the same six outputs:
 | `fit_profile.csv` | The best-fit model contour: columns `s_nm, r_nm, z_nm, psi_deg, dpsi_ds_inv_nm, is_bilayer` (arclength, position, tangent angle, curvature; `is_bilayer = 1` marks the flat bilayer beyond the contact line). |
 | `identifiability.png` | χ² map over (γ_m, γ_b/γ_m): shows that this profile constrains *both* tensions, not just a combination of them. |
 | `solver_validation.png` | Checks of the shape solver against the paper's analytic small- and large-volume limits. It doesn't depend on the data, so it's identical in every universe. |
+| `cross_check.csv` | The profile refitted by the independent code `data/raw/compare_fit.py`, next to our fit: for each quantity both values, both 1σ errors, and the difference in units of our σ. |
 
 Next to each output there is a hidden `.<output>.manifest.json`: the run
 record (exact command, decisions, git commit, input checksums, timestamps).
+
+### The code
+
+[![Browse the code](https://img.shields.io/badge/code-src%2F-blue)](src/)
+[![Download ZIP](https://img.shields.io/badge/download-ZIP-green)](https://github.com/gabrimaine/drop_lm/archive/refs/heads/main.zip)
+
+Click a file to read it on GitHub. Its page has **Raw** and **Download raw
+file** buttons (top right of the file).
+
+| File | What it does | Makes |
+|---|---|---|
+| [`src/lens.py`](src/lens.py) | Shape solver: shape equations, axis series start, contact line, lens-branch selection | used by every output |
+| [`src/fitting.py`](src/fitting.py) | Least-squares model, initial grid search, derived physical quantities | used by `fit_params`, `identifiability` |
+| [`src/fit.py`](src/fit.py) | Runs the fit and its uncertainty estimate | `fit_params` |
+| [`src/fit_profile.py`](src/fit_profile.py) | Writes the best-fit contour | `fit_profile` |
+| [`src/plot_fit.py`](src/plot_fit.py) | Data vs model figure | `fit_plot` |
+| [`src/identifiability.py`](src/identifiability.py) | Profile Δχ² map over the two tensions | `identifiability` |
+| [`src/validate_solver.py`](src/validate_solver.py) | Solver against the SI's analytic limits | `solver_validation` |
+| [`src/summarize.py`](src/summarize.py) | Flattens the fit into one row per quantity | `fit_summary` |
+| [`src/cross_check.py`](src/cross_check.py) | Refits with the independent code and tabulates both | `cross_check` |
+| [`data/raw/compare_fit.py`](data/raw/compare_fit.py) | Independent implementation of the same fit (standalone; `python data/raw/compare_fit.py --test` runs its self-tests) | used by `cross_check` |
+
+The exact command that runs each script is in [`astra.yaml`](astra.yaml).
+Two caveats on the ZIP: the repository is private, so only collaborators can
+download it; and it holds the scripts in full but only one-line annex pointers
+for `data/` and `results/` (Section 2.2).
 
 ---
 
@@ -147,15 +229,15 @@ for f in sorted(glob.glob("results/*/fit_params.json")):
 PY
 ```
 
-At the time of writing (commit `c9e7983`) this gives:
+At the time of writing (commit `169a0c9`) this gives:
 
 | Universe | What differs from baseline | V (nm³) | γ_b/γ_m | γ_m (mN/m) | γ_b (mN/m) |
 |---|---|---|---|---|---|
-| `baseline` | — | 11483 ± 3 | 0.8745 | 3.383 ± 0.024 | 2.959 ± 0.024 |
-| `temp-298` | T = 298.15 K instead of 310 K | 11483 | 0.8745 | 3.254 | 2.846 |
-| `z0-free` | free vertical offset of the bilayer plane | 11491 | 0.8735 | 3.352 | 2.928 |
-| `r-le-40` | only r ≤ 40 nm fitted | 11483 | 0.8745 | 3.383 | 2.959 |
-| `bootstrap` | bootstrap instead of Jacobian errors | 11483 | 0.8745 | 3.383 | 2.959 |
+| `baseline` | — | 11483 ± 3 | 0.8742 | 3.373 ± 0.027 | 2.949 ± 0.027 |
+| `temp-298` | T = 298.15 K instead of 310 K | 11483 | 0.8742 | 3.244 | 2.836 |
+| `z0-free` | free vertical offset of the bilayer plane | 11491 | 0.8737 | 3.359 | 2.935 |
+| `r-le-40` | only r ≤ 40 nm fitted | 11483 | 0.8742 | 3.373 | 2.949 |
+| `bootstrap` | bootstrap instead of Jacobian errors | 11483 | 0.8742 | 3.373 | 2.949 |
 
 The JSON files are the source of truth; if this table and the files ever
 disagree, the files win.
@@ -255,8 +337,13 @@ To view it you need Node.js 20 or newer and the MyST CLI:
 ```bash
 npm install -g mystmd        # once
 myst start                   # live preview; prints the URL (port 3000 or the next free one)
-myst build --html            # or a static site in _build/html/
+myst build --html            # or a static site in _build/html/ (serve it, see below)
 ```
+
+A static build has to be served, e.g. `cd _build/html && python3 -m http.server 8000`;
+opened from a `file://` URL the page does not load. On a remote machine,
+forward the page port *and* port 3100, which serves the images (see the Quick
+start).
 
 The plugin (MySTRA v0.0.8) and the theme (astra-article-theme v0.0.16) are
 pinned in `myst.yml` and downloaded on the first build. Run `myst build`
@@ -266,7 +353,9 @@ pinned in `myst.yml` and downloaded on the first build. Run `myst build`
 The report shows the first universe in `universes/` (`baseline`). The section
 "Changing the analysis choices" has one tab per universe with that
 universe's own fit plot. Neither the report nor `lc view` can switch
-decisions in the page. For any other combination, add a universe (Section 6)
+decisions in the page. The section "Independent cross-check" compares the fit
+with `data/raw/compare_fit.py`, and the last section, "Code", shows and links
+every script. For any other combination, add a universe (Section 6)
 and look in `results/<universe>/`.
 
 ---
@@ -425,9 +514,9 @@ both tensions are constrained separately; `identifiability.png` shows a closed
   t = γR − κRu². Its own Eq. 19 and small-volume results are consistent only
   with t = γR − κRu²/2, which is what the code uses.
 - **Error bars are lower bounds:** both methods treat residuals as independent,
-  but neighbouring points along a profile are correlated. Read the ±0.02 mN/m
+  but neighbouring points along a profile are correlated. Read the ±0.03 mN/m
   on the tensions as a few-percent uncertainty at best. The spread across
-  universes (≈ 1% for a free offset) is a better guide to systematics, and the
+  universes (≈ 0.5% for a free offset) is a better guide to systematics, and the
   temperature choice dominates the absolute tensions.
 - κ_m = 6 k_BT is an input. Tensions scale linearly with it.
 
@@ -444,6 +533,11 @@ both tensions are constrained separately; `identifiability.png` shows a closed
 - **`lc materialize` refuses to start:** the git tree isn't clean; commit or stash.
 - **An output shows as `stale` after you wrote into `results/` by hand:**
   expected (a "foreign write"). `lc materialize` will remake it.
+- **The report page is blank or unstyled:** you opened `_build/html/index.html`
+  from disk. Serve it (`python3 -m http.server`) or use `myst start`.
+- **The report's tabs switch but the figures are empty:** on a remote machine,
+  forward port 3100 as well as the page port. Locally, the PNGs are probably
+  not downloaded: `git annex get results/`.
 - **Lots of `lmod/init/bash … Permission denied` lines in `lc` logs on HPC
   systems:** harmless. The sandbox blocks a few tools that the cluster's
   shell start-up scripts call.

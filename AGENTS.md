@@ -20,7 +20,14 @@ uvx astra-tools@0.2.18 validate           # after any spec edit
   shooting from the axis (series start psi = a s + (a - P/2)/8 s^3), contact line = psi
   returning to 0, contact condition kappa_m u(R)^2 = 2 gamma_m - gamma_b.
 - `src/fitting.py` — least squares in theta = (ln lambda, g = gamma_b/gamma_m, ln a [, z0]).
-- `src/fit.py`, `fit_profile.py`, `plot_fit.py`, `identifiability.py`, `validate_solver.py` — one script per output.
+- `src/fit.py`, `fit_profile.py`, `plot_fit.py`, `identifiability.py`, `validate_solver.py`,
+  `summarize.py`, `cross_check.py` — one script per output.
+- `data/raw/compare_fit.py` — the user's independent implementation (shoots on apex curvature
+  at fixed pressure). Stored in git, not annex (`.gitattributes` exception). Do not edit it;
+  `cross_check.py` imports it by path and runs its 5 smart starts in parallel (no grid).
+- `lens.shoot(dense=True)` samples the DOP853 dense output at 4001 points. The old
+  max_step=0.05 sampling gave up to 0.7 pm interpolation error and a 0.4 sigma tension bias,
+  found by the cross-check (fixed in fae3bc2).
 
 ## Project Notes
 

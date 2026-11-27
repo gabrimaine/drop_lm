@@ -76,9 +76,10 @@ A droplet between the two limits carries information on both.
 
 ## Methods
 
+(sec-solver)=
 ### Solving the shape equations
 
-We integrate [](#eq-shape) in dimensionless form from a series expansion at the axis outward, with an 8th-order Runge–Kutta integrator [@virtanen2020]. The integration stops when $\psi$ first returns to zero. This is the shooting method of the Supporting Material {astra:cite}`prior_insights.shooting_method`. In the symmetric model only one unknown must be tuned for a given apex curvature: the pressure. We find it by root-bracketing [](#eq-contact), taking the single-valued lens branch.
+We integrate [](#eq-shape) in dimensionless form from a series expansion at the axis outward, with an 8th-order Runge–Kutta integrator [@virtanen2020]. The integration stops when $\psi$ first returns to zero. This is the shooting method of the Supporting Material {astra:cite}`prior_insights.shooting_method`. In the symmetric model only one unknown must be tuned for a given apex curvature: the pressure. We find it by root-bracketing [](#eq-contact), taking the single-valued lens branch. The model height at the data radii is read from the integrator's continuous solution, sampled at 4001 points along the contour, which keeps the interpolation error below $10^{-6}$ nm.
 
 [](#output-solver_validation) checks the solver against the paper's analytic limits ({astra}`findings.solver_validated`).
 
@@ -138,7 +139,7 @@ The reduced volume is $V/\lambda_m^3$ = {astra:value col=value where="quantity=V
 :::
 
 :::{dropdown} How the uncertainties should be read
-Both uncertainty methods treat the residuals as independent. The residuals in [](#output-fit_plot) are visibly correlated along $r$, so the quoted errors are lower bounds. The *z0-free* tab in [](#sec-universes) gives a better sense of the systematic error on the tensions: it shifts them by roughly one quoted σ. None of the choices moves the ratio or the volume appreciably.
+Both uncertainty methods treat the residuals as independent. The residuals in [](#output-fit_plot) are visibly correlated along $r$, so the quoted errors are lower bounds. The *z0-free* tab in [](#sec-universes) gives a sense of the systematic error on the tensions: it shifts them by about half a quoted σ. None of the choices moves the ratio or the volume appreciably.
 :::
 
 ### Are the two tensions separately determined?
@@ -150,6 +151,61 @@ At a small reduced volume only $\Delta\gamma$ would be measurable {astra:cite}`p
 :::
 
 :::{astra} findings.tensions_separable
+:::
+
+(sec-cross-check)=
+### Independent cross-check
+
+To test the implementation, the profile was refitted with a separately written code ({astra}`inputs.other_code`, [`data/raw/compare_fit.py`](#code-compare-fit)). It solves the same shape equations, with its own choices throughout. It shoots on the apex curvature at fixed pressure, where we shoot on the pressure at fixed apex curvature. Its parameters are $\lambda_m$, $2-\gamma_b/\gamma_m$ and the reduced pressure, and it starts from its own guesses taken from the data. Its uncertainties also come from its own least-squares Jacobian. [](#tbl-cross-check) puts the two fits side by side.
+
+```{list-table} This analysis and the independent code on the same profile (baseline universe). The last column is the difference in units of our 1σ.
+:label: tbl-cross-check
+:header-rows: 1
+* - Quantity
+  - This analysis
+  - Independent code
+  - Difference (σ)
+* - $V$ (nm³)
+  - {astra:value col=ours err=ours_std where="quantity=V" sig=6}`outputs.cross_check`
+  - {astra:value col=other err=other_std where="quantity=V" sig=6}`outputs.cross_check`
+  - {astra:value col=diff_sigma where="quantity=V" sig=1}`outputs.cross_check`
+* - $\gamma_b/\gamma_m$
+  - {astra:value col=ours err=ours_std where="quantity=gamma_ratio" sig=5}`outputs.cross_check`
+  - {astra:value col=other err=other_std where="quantity=gamma_ratio" sig=5}`outputs.cross_check`
+  - {astra:value col=diff_sigma where="quantity=gamma_ratio" sig=1}`outputs.cross_check`
+* - $\gamma_m$ (mN/m)
+  - {astra:value col=ours err=ours_std where="quantity=gamma_m" sig=5}`outputs.cross_check`
+  - {astra:value col=other err=other_std where="quantity=gamma_m" sig=5}`outputs.cross_check`
+  - {astra:value col=diff_sigma where="quantity=gamma_m" sig=1}`outputs.cross_check`
+* - $\gamma_b$ (mN/m)
+  - {astra:value col=ours err=ours_std where="quantity=gamma_b" sig=5}`outputs.cross_check`
+  - {astra:value col=other err=other_std where="quantity=gamma_b" sig=5}`outputs.cross_check`
+  - {astra:value col=diff_sigma where="quantity=gamma_b" sig=1}`outputs.cross_check`
+* - $\lambda_m$ (nm)
+  - {astra:value col=ours err=ours_std where="quantity=lambda_m" sig=5}`outputs.cross_check`
+  - {astra:value col=other err=other_std where="quantity=lambda_m" sig=5}`outputs.cross_check`
+  - {astra:value col=diff_sigma where="quantity=lambda_m" sig=1}`outputs.cross_check`
+* - $R$ (nm)
+  - {astra:value col=ours err=ours_std where="quantity=R" sig=6}`outputs.cross_check`
+  - {astra:value col=other err=other_std where="quantity=R" sig=6}`outputs.cross_check`
+  - {astra:value col=diff_sigma where="quantity=R" sig=1}`outputs.cross_check`
+* - $h$ (nm)
+  - {astra:value col=ours err=ours_std where="quantity=h" sig=6}`outputs.cross_check`
+  - {astra:value col=other err=other_std where="quantity=h" sig=6}`outputs.cross_check`
+  - {astra:value col=diff_sigma where="quantity=h" sig=1}`outputs.cross_check`
+* - rms residual (pm)
+  - {astra:value col=ours where="quantity=rms" sig=5}`outputs.cross_check`
+  - {astra:value col=other where="quantity=rms" sig=5}`outputs.cross_check`
+  -
+```
+
+The two codes agree far inside the statistical errors. This only became true after the cross-check found an error in our code. The first comparison differed by 0.3–0.4σ on the tensions. The cause was our solver reading the model height off a contour sampled every $0.05\,\lambda_m$, an error of up to 0.7 pm, against residuals of about 8 pm. It now uses the integrator's continuous solution ([](#sec-solver)). The independent code's $\gamma_b$ error is about 10 % smaller than ours because it leaves out the correlation between its parameters.
+
+:::{astra} findings.independent_reproduction
+:::
+
+:::{astra} outputs.cross_check
+:caption: The full comparison, including derived quantities. `diff_sigma` = (independent − ours) / our σ.
 :::
 
 (sec-universes)=
@@ -176,7 +232,7 @@ Values: [results/temp-298/fit_summary.csv](results/temp-298/fit_summary.csv)
 :::
 
 :::{tab-item} Free baseline
-{astra}`decisions.baseline.free`. The bilayer plane gets a fitted offset. This is the largest shift of the tensions among the choices, about one quoted σ.
+{astra}`decisions.baseline.free`. The bilayer plane gets a fitted offset. Apart from the temperature, which only rescales them, this is the one choice that moves the tensions: by about half a quoted σ.
 
 ![Fit with free z0](results/z0-free/fit_plot.png)
 
@@ -194,7 +250,7 @@ Values: [results/r-le-40/fit_summary.csv](results/r-le-40/fit_summary.csv)
 :::
 
 :::{tab-item} Bootstrap
-{astra}`decisions.uncertainty.residual_bootstrap`. Same best fit. The errors come from refitting resampled residuals and agree with the Jacobian estimate.
+{astra}`decisions.uncertainty.residual_bootstrap`. Same best fit. The errors come from refitting resampled residuals and are close to the Jacobian estimate, at most about 12 % smaller.
 
 ![Fit with bootstrap errors](results/bootstrap/fit_plot.png)
 
@@ -221,4 +277,117 @@ The main modelling assumptions are up–down symmetry, a flat bilayer, and no li
 The analysis is specified in `astra.yaml` and runs with [Lightcone](https://github.com/LightconeResearch). Inputs, code and every output of every universe live in the repository, with large files in git-annex; `README.md` explains how to get and rerun them. All inputs:
 
 :::{astra} inputs
+:::
+
+(sec-code)=
+### Code
+
+Every script is below. Click a file name to open it as plain text in a new tab, and save it from there (your browser may add a hash to the file name). Or expand a box to read the code in the page. The analysis specification itself is {download}`astra.yaml <astra.yaml>`, and the Python environment is pinned in {download}`pyproject.toml <pyproject.toml>` and {download}`uv.lock <uv.lock>`.
+
+:::{list-table} Analysis code. Each output is made by exactly one script, run by `lc materialize` with the command recorded in `astra.yaml`.
+:label: tbl-code
+:header-rows: 1
+* - File
+  - What it does
+  - Makes
+* - {download}`src/lens.py <src/lens.py>`
+  - Shape solver: shape equations, axis series start, contact line, lens-branch selection
+  - used by every output
+* - {download}`src/fitting.py <src/fitting.py>`
+  - Least-squares model, initial grid search, derived physical quantities
+  - used by `fit_params`, `identifiability`
+* - {download}`src/fit.py <src/fit.py>`
+  - Runs the fit and its uncertainty estimate
+  - `fit_params`
+* - {download}`src/fit_profile.py <src/fit_profile.py>`
+  - Writes the best-fit contour
+  - `fit_profile`
+* - {download}`src/plot_fit.py <src/plot_fit.py>`
+  - Data vs model figure
+  - `fit_plot`
+* - {download}`src/identifiability.py <src/identifiability.py>`
+  - Profile $\Delta\chi^2$ map over the two tensions
+  - `identifiability`
+* - {download}`src/validate_solver.py <src/validate_solver.py>`
+  - Solver against the SI's analytic limits
+  - `solver_validation`
+* - {download}`src/summarize.py <src/summarize.py>`
+  - Flattens the fit into one row per quantity
+  - `fit_summary`
+* - {download}`src/cross_check.py <src/cross_check.py>`
+  - Refits with the independent code and tabulates both
+  - `cross_check`
+* - {download}`data/raw/compare_fit.py <data/raw/compare_fit.py>`
+  - The independent implementation (standalone script)
+  - used by `cross_check`
+:::
+
+(code-lens)=
+:::{dropdown} `src/lens.py`: shape solver: shape equations, axis series start, contact line, lens-branch selection
+```{literalinclude} src/lens.py
+:language: python
+```
+:::
+
+(code-fitting)=
+:::{dropdown} `src/fitting.py`: least-squares model, initial grid search, derived physical quantities
+```{literalinclude} src/fitting.py
+:language: python
+```
+:::
+
+(code-fit)=
+:::{dropdown} `src/fit.py`: runs the fit and its uncertainty estimate
+```{literalinclude} src/fit.py
+:language: python
+```
+:::
+
+(code-fit-profile)=
+:::{dropdown} `src/fit_profile.py`: writes the best-fit contour
+```{literalinclude} src/fit_profile.py
+:language: python
+```
+:::
+
+(code-plot-fit)=
+:::{dropdown} `src/plot_fit.py`: data vs model figure
+```{literalinclude} src/plot_fit.py
+:language: python
+```
+:::
+
+(code-identifiability)=
+:::{dropdown} `src/identifiability.py`: profile $\Delta\chi^2$ map over the two tensions
+```{literalinclude} src/identifiability.py
+:language: python
+```
+:::
+
+(code-validate-solver)=
+:::{dropdown} `src/validate_solver.py`: solver against the SI's analytic limits
+```{literalinclude} src/validate_solver.py
+:language: python
+```
+:::
+
+(code-summarize)=
+:::{dropdown} `src/summarize.py`: flattens the fit into one row per quantity
+```{literalinclude} src/summarize.py
+:language: python
+```
+:::
+
+(code-cross-check)=
+:::{dropdown} `src/cross_check.py`: refits with the independent code and tabulates both
+```{literalinclude} src/cross_check.py
+:language: python
+```
+:::
+
+(code-compare-fit)=
+:::{dropdown} `data/raw/compare_fit.py`: the independent implementation (standalone script)
+```{literalinclude} data/raw/compare_fit.py
+:language: python
+```
 :::
