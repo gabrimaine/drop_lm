@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "output_id": "cross_check_plot",
+  "universe_id": "z0-free",
+  "recipe": "python src/plot_cross_check.py --profile data/raw/td_reset2.xvg --fit-params results/z0-free/fit_params.json --cross-check results/z0-free/cross_check.csv --sampling-bias results/z0-free/sampling_bias.csv --other-code data/raw/compare_fit.py --fit-range all --output results/z0-free/cross_check_plot.png",
+  "definition_version": "sha256:0576966e9260eb1c49af0b5af81681692629cdff85911a4ac53307537ce7f057",
+  "env_version": "sha256:5251d632a1324cd02186a0d88485c6f07b0b8bbf54760e1f1d57b15f44c6ecb5",
+  "data_version": "sha256:288c2b1c3cd7d217f10f025541ddc4617a3631f2588df3dc423a8428b83821c0",
+  "decisions": {
+    "fit_range": "all"
+  },
+  "input_versions": {
+    "profile": "sha256:b0dd20f8e97c9e373163b8c096434493890d72e5c57c03a711b5b2d481f7c220",
+    "fit_params": "sha256:9ec8bafd3a0d5120982dceefc4a7d36c1ba8c931d0b47416ec2ad44e600e868b",
+    "cross_check": "sha256:4f3426484aa30256121f3e2f017c5e02377ee10b1585a8072ef7ab5442605db2",
+    "sampling_bias": "sha256:04f3bd532db50504b1294981fd143717d127375784a3b7be2bf4cc4fa3956159",
+    "other_code": "sha256:a3c93f7926bd485dfa80479dca7fab54fb782628b50e067a4b9bfd5f5003e75a",
+    "lens_solver": "sha256:314bb49cb40792b3d9bdeebbeb2bdd76ac709acdd646d9c62f00cf3ce06e8f22",
+    "fitting_code": "sha256:d5aa76abc08d20a31350e70a86e5fbbb56a0799e4e11e72c4a2c6a44df1c3604",
+    "old_sampling": "sha256:215363c9b8ec0f51d8943ba2c7a2c6e64bbc02a9a64ebcafea9015a6c1e4123f",
+    "cross_check_plot_script": "sha256:4eae31903c8a9b4fbe031284fe3f85e784277f75255e8c3af8d03694cd8eb85f"
+  },
+  "git_sha": "fce16a8699cc3613e20005a27d6f99f29306e6e5",
+  "git_remote": "git@github.com:gabrimaine/drop_lm.git",
+  "lc_version": "0.5.1",
+  "hermeticity": {
+    "mechanism": "landlock",
+    "fs": "declared",
+    "network": "allowed",
+    "landlock_abi": 5,
+    "exec_allowlist_version": 1
+  },
+  "started_at": "2026-11-27T18:08:58.010+00:00",
+  "finished_at": "2026-11-27T18:09:04.150+00:00",
+  "uv_version": "0.13.10",
+  "image": null
+}
