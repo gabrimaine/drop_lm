@@ -227,10 +227,11 @@ lc view                                # prints a URL (http://localhost:<port>/l
 ```
 
 Open the URL in a browser. The page renders `astra.yaml`: the inputs, the
-outputs, and each decision with its options and rationale, together with the
-outputs of the selected universe. Choosing different options shows the
-results of the matching universe if it has been computed; otherwise the page
-says *"This output has not been materialized"*.
+outputs with their run records, the findings and the papers behind them, and
+each decision with its options and rationale. It always shows the **baseline**
+universe (lightcone-cli 0.5.1 fixes it, and the option lists cannot be
+clicked to switch). To see another universe, open `results/<universe>/`, or
+use the tabs in the report (below).
 `lc view` returns immediately, and the server stops itself after 30 minutes
 of inactivity.
 
@@ -264,7 +265,9 @@ pinned in `myst.yml` and downloaded on the first build. Run `myst build`
 
 The report shows the first universe in `universes/` (`baseline`). The section
 "Changing the analysis choices" has one tab per universe with that
-universe's own fit plot. For other combinations, use `lc view`.
+universe's own fit plot. Neither the report nor `lc view` can switch
+decisions in the page. For any other combination, add a universe (Section 6)
+and look in `results/<universe>/`.
 
 ---
 

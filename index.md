@@ -207,7 +207,7 @@ Values: [results/bootstrap/fit_summary.csv](results/bootstrap/fit_summary.csv)
 :::
 
 :::{tip} Trying other combinations
-The report renders the first universe in `universes/` (here `baseline`). To explore any combination of choices, add a file to `universes/` and run `lc materialize local`. `lc view` then shows every universe side by side, with each output's provenance. See `README.md` for step-by-step instructions.
+The report renders the first universe in `universes/` (here `baseline`). The decision boxes above show its selections and cannot be switched in the page. To try another combination of choices, add a file to `universes/` and run `lc materialize local`. Its outputs then appear in `results/<universe>/`. See `README.md` for step-by-step instructions.
 :::
 
 ## Discussion
