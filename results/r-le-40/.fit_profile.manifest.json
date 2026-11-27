@@ -5,14 +5,14 @@
   "recipe": "python src/fit_profile.py --fit-params results/r-le-40/fit_params.json --output results/r-le-40/fit_profile.csv",
   "definition_version": "sha256:ec8c5faadf806ed84d75e62f3c9a476051e5a2193ba63566a8a1c3ecbbb968d0",
   "env_version": "sha256:5251d632a1324cd02186a0d88485c6f07b0b8bbf54760e1f1d57b15f44c6ecb5",
-  "data_version": "sha256:1d04e702bdfefab7d607f3876a56096ff226b5020ce5c730156c35ee93c007c0",
+  "data_version": "sha256:0d379cb721a4a252357e18d52c419dd6b33b8022954c2a43032f845a0d28b15d",
   "decisions": {},
   "input_versions": {
-    "fit_params": "sha256:807e6581d351c27d8722ea237eab9e3b9f5e244342b43654ee846385dd215162",
-    "lens_solver": "sha256:be9e021d0fda4e52d73f73251321a2d81f701f5cb8149bf6306ea5fcd98bb12f",
+    "fit_params": "sha256:c20b48441977bf608d1d734b92e0851d96bd14a8f1db0157c92d9e7863a4aca9",
+    "lens_solver": "sha256:314bb49cb40792b3d9bdeebbeb2bdd76ac709acdd646d9c62f00cf3ce06e8f22",
     "profile_script": "sha256:9fa64033a3cc5ed66f4378dfbf75cfb21d559e5d1c8ee210caa74dc6c92e3ae0"
   },
-  "git_sha": "ce2556d9eb00107cab29c3da2cc5e562af7932af",
+  "git_sha": "fae3bc21706208bae440814875011faece509403",
   "git_remote": "git@github.com:gabrimaine/drop_lm.git",
   "lc_version": "0.5.1",
   "hermeticity": {
@@ -22,8 +22,8 @@
     "landlock_abi": 5,
     "exec_allowlist_version": 1
   },
-  "started_at": "2026-11-27T13:05:06.785+00:00",
-  "finished_at": "2026-11-27T13:05:09.488+00:00",
+  "started_at": "2026-11-27T17:40:21.352+00:00",
+  "finished_at": "2026-11-27T17:40:24.112+00:00",
   "uv_version": "0.13.10",
   "image": null
 }
