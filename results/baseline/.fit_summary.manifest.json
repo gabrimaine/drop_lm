@@ -5,13 +5,13 @@
   "recipe": "python src/summarize.py --fit-params results/baseline/fit_params.json --output results/baseline/fit_summary.csv",
   "definition_version": "sha256:5e4b6634ad92e6bd7c719dee9e13985890a76c781918c693b3a322eb44263ac4",
   "env_version": "sha256:5251d632a1324cd02186a0d88485c6f07b0b8bbf54760e1f1d57b15f44c6ecb5",
-  "data_version": "sha256:3fc8b9e7a406fec7332c17bcc700330539ea1c0316b3e754f4ec954360b1b326",
+  "data_version": "sha256:3c6cbfea7f156a4ab9bd11911f5d15675921c2189e0e551d703663c6f26e930c",
   "decisions": {},
   "input_versions": {
-    "fit_params": "sha256:0118e285701fc3ecabe8cc179617b4e8e2d1a6c6401681e4a47d8d467282b5c6",
+    "fit_params": "sha256:2f6d7e890aa75fa8340312f2f6dbd7ab6ca93ca3aaabe70d919de74f9a553ed8",
     "summary_script": "sha256:c5a3e3bded30de19ac94d0c5c13778a6d37e447801f56ae8f5e17b3a5ac94479"
   },
-  "git_sha": "f0a775c06cd85e30ac627e422e5bbf88d5e5edd2",
+  "git_sha": "fae3bc21706208bae440814875011faece509403",
   "git_remote": "git@github.com:gabrimaine/drop_lm.git",
   "lc_version": "0.5.1",
   "hermeticity": {
@@ -21,8 +21,8 @@
     "landlock_abi": 5,
     "exec_allowlist_version": 1
   },
-  "started_at": "2026-11-27T13:29:51.538+00:00",
-  "finished_at": "2026-11-27T13:29:51.768+00:00",
+  "started_at": "2026-11-27T17:40:21.208+00:00",
+  "finished_at": "2026-11-27T17:40:21.459+00:00",
   "uv_version": "0.13.10",
   "image": null
 }
