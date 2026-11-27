@@ -5,7 +5,7 @@
   "recipe": "python src/cross_check.py --profile data/raw/td_reset2.xvg --fit-params results/baseline/fit_params.json --other-code data/raw/compare_fit.py --kappa-kT 6 --temperature t310 --baseline fixed --fit-range all --procs 5 --output results/baseline/cross_check.csv",
   "definition_version": "sha256:0cf9e2af4b4ae496fa7d5db27614be12a53836dc2172a63ea423a5dd2714280e",
   "env_version": "sha256:5251d632a1324cd02186a0d88485c6f07b0b8bbf54760e1f1d57b15f44c6ecb5",
-  "data_version": "sha256:b000c084d54e1b022d24debf9c4071bd1b9ce53ee5f55a860df93de22e4710d3",
+  "data_version": "sha256:281a357862d51a3de897ac7a0b114c05f261d872687553340b7fb221cd50a609",
   "decisions": {
     "temperature": "t310",
     "baseline": "fixed",
@@ -15,9 +15,9 @@
     "profile": "sha256:b0dd20f8e97c9e373163b8c096434493890d72e5c57c03a711b5b2d481f7c220",
     "fit_params": "sha256:2f6d7e890aa75fa8340312f2f6dbd7ab6ca93ca3aaabe70d919de74f9a553ed8",
     "other_code": "sha256:a3c93f7926bd485dfa80479dca7fab54fb782628b50e067a4b9bfd5f5003e75a",
-    "cross_check_script": "sha256:3013fe1de170e33c4e44ce554547466ba4393d6b31164e9970d6704dc37af5eb"
+    "cross_check_script": "sha256:fd475321d7c537729cee93fa8e299f842f408ff1c1a4f5e62c44eca30cbfe51c"
   },
-  "git_sha": "fae3bc21706208bae440814875011faece509403",
+  "git_sha": "fce16a8699cc3613e20005a27d6f99f29306e6e5",
   "git_remote": "git@github.com:gabrimaine/drop_lm.git",
   "lc_version": "0.5.1",
   "hermeticity": {
@@ -27,8 +27,8 @@
     "landlock_abi": 5,
     "exec_allowlist_version": 1
   },
-  "started_at": "2026-11-27T17:40:21.189+00:00",
-  "finished_at": "2026-11-27T17:43:04.841+00:00",
+  "started_at": "2026-11-27T18:07:19.129+00:00",
+  "finished_at": "2026-11-27T18:09:00.561+00:00",
   "uv_version": "0.13.10",
   "image": null
 }
