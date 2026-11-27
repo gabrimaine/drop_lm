@@ -13,3 +13,5 @@ results/** annex.largefiles=anything
 data/** annex.largefiles=anything
 .datalad/environments/*/image annex.largefiles=anything
 results/**/.*.manifest.json annex.largefiles=nothing
+# An independent fit script for cross-checking, kept readable on a plain clone.
+data/raw/compare_fit.py annex.largefiles=nothing
