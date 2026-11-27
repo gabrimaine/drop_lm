@@ -5,7 +5,7 @@
   "recipe": "python src/cross_check.py --profile data/raw/td_reset2.xvg --fit-params results/temp-298/fit_params.json --other-code data/raw/compare_fit.py --kappa-kT 6 --temperature t298 --baseline fixed --fit-range all --procs 5 --output results/temp-298/cross_check.csv",
   "definition_version": "sha256:b366b56eeec54868e7b3064be1b450f19a08446bf685d64ef9b4af6319747e78",
   "env_version": "sha256:5251d632a1324cd02186a0d88485c6f07b0b8bbf54760e1f1d57b15f44c6ecb5",
-  "data_version": "sha256:1e9d957abf9c98051b1a38e622f14b7ae59e410847f05b4f4a60e14d56b07bb3",
+  "data_version": "sha256:7d4e4ff3884379797b9fdc3a761311d8b7c56f67b0cdf330248ab8d76c51583c",
   "decisions": {
     "temperature": "t298",
     "baseline": "fixed",
@@ -15,9 +15,11 @@
     "profile": "sha256:b0dd20f8e97c9e373163b8c096434493890d72e5c57c03a711b5b2d481f7c220",
     "fit_params": "sha256:73b380cff29fa10803ada2f737e5bc2eee211efe7218ec7ada8d68ad17751443",
     "other_code": "sha256:a3c93f7926bd485dfa80479dca7fab54fb782628b50e067a4b9bfd5f5003e75a",
-    "cross_check_script": "sha256:fd475321d7c537729cee93fa8e299f842f408ff1c1a4f5e62c44eca30cbfe51c"
+    "lens_solver": "sha256:314bb49cb40792b3d9bdeebbeb2bdd76ac709acdd646d9c62f00cf3ce06e8f22",
+    "fitting_code": "sha256:d5aa76abc08d20a31350e70a86e5fbbb56a0799e4e11e72c4a2c6a44df1c3604",
+    "cross_check_script": "sha256:8557dfb1672f7f326b0792646f1da909b936f0630b85daf865572bc3a0077dd1"
   },
-  "git_sha": "fce16a8699cc3613e20005a27d6f99f29306e6e5",
+  "git_sha": "44c49e90d7ad6623fa10237b1232c9ac5c935731",
   "git_remote": "git@github.com:gabrimaine/drop_lm.git",
   "lc_version": "0.5.1",
   "hermeticity": {
@@ -27,8 +29,8 @@
     "landlock_abi": 5,
     "exec_allowlist_version": 1
   },
-  "started_at": "2026-11-27T18:07:19.198+00:00",
-  "finished_at": "2026-11-27T18:08:59.361+00:00",
+  "started_at": "2026-11-27T18:11:24.232+00:00",
+  "finished_at": "2026-11-27T18:13:05.548+00:00",
   "uv_version": "0.13.10",
   "image": null
 }
