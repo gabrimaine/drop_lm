@@ -5,15 +5,15 @@
   "recipe": "python src/plot_fit.py --profile data/raw/td_reset2.xvg --fit-profile results/r-le-40/fit_profile.csv --fit-params results/r-le-40/fit_params.json --output results/r-le-40/fit_plot.png",
   "definition_version": "sha256:18fb326a25c5f0c46ef13644c3e9addbb85984e10c05339c4a49782585bcd821",
   "env_version": "sha256:5251d632a1324cd02186a0d88485c6f07b0b8bbf54760e1f1d57b15f44c6ecb5",
-  "data_version": "sha256:268364ac468e81af0a5761d8eccdaaefdf7934e04b9b2e2ad72bd7e155e89d64",
+  "data_version": "sha256:463a842a1fe0cf7ff536a59a56bb94a0b6b13e302c98ed4078a664dd53a4d0c9",
   "decisions": {},
   "input_versions": {
     "profile": "sha256:b0dd20f8e97c9e373163b8c096434493890d72e5c57c03a711b5b2d481f7c220",
-    "fit_profile": "sha256:1d04e702bdfefab7d607f3876a56096ff226b5020ce5c730156c35ee93c007c0",
-    "fit_params": "sha256:807e6581d351c27d8722ea237eab9e3b9f5e244342b43654ee846385dd215162",
+    "fit_profile": "sha256:0d379cb721a4a252357e18d52c419dd6b33b8022954c2a43032f845a0d28b15d",
+    "fit_params": "sha256:c20b48441977bf608d1d734b92e0851d96bd14a8f1db0157c92d9e7863a4aca9",
     "plot_script": "sha256:777eda6afafa0479403bd63f0d5a543eec77151bc5bca0f54f4d031cc839ae02"
   },
-  "git_sha": "ce2556d9eb00107cab29c3da2cc5e562af7932af",
+  "git_sha": "fae3bc21706208bae440814875011faece509403",
   "git_remote": "git@github.com:gabrimaine/drop_lm.git",
   "lc_version": "0.5.1",
   "hermeticity": {
@@ -23,8 +23,8 @@
     "landlock_abi": 5,
     "exec_allowlist_version": 1
   },
-  "started_at": "2026-11-27T13:05:09.514+00:00",
-  "finished_at": "2026-11-27T13:05:12.533+00:00",
+  "started_at": "2026-11-27T17:40:24.153+00:00",
+  "finished_at": "2026-11-27T17:40:29.021+00:00",
   "uv_version": "0.13.10",
   "image": null
 }
