@@ -1,0 +1,7 @@
+id: baseline
+description: Default configuration using standard practices
+decisions:
+  temperature: t310
+  baseline: fixed
+  fit_range: all
+  uncertainty: jacobian

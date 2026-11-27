@@ -1,0 +1,12 @@
+[project]
+name = "drop_lm"
+version = "0.0.1"
+requires-python = ">=3.11"
+dependencies = [
+    "matplotlib>=3.11.2",
+    "numpy>=2.4.6",
+    "scipy>=1.17.1",
+]
+
+[tool.uv]
+required-version = ">=0.7"

@@ -1,0 +1,164 @@
+# ASTRA Analysis Specification
+
+version: "0.0.14"
+name: "drop_lm"
+description: >-
+  Fit the symmetric lipid-droplet lens model of Deslandes, Thiam & Foret
+  (Biophys. J. 113:15, 2017; Supporting Material Sect. 3-5) to a measured
+  droplet profile z(r), and extract the droplet volume, the bilayer/monolayer
+  tension ratio gamma_b/gamma_m, and the monolayer and bilayer tensions, at a
+  fixed monolayer bending rigidity kappa_m = 6 kBT. The model gives a free
+  energy, not z(r); the shape is obtained by solving the Euler-Lagrange shape
+  equations (SI Eq. 18) of the monolayer by shooting from the symmetry axis,
+  with the contact-line force balance (SI Eqs. 19, 23) reduced to
+  kappa_m u(R)^2 = 2 gamma_m - gamma_b for the symmetric lens (flat bilayer,
+  psi_contact = 0). `solver_validation` checks the solver against the SI's
+  analytic limits; `fit_params` is the fit; `fit_profile` and `fit_plot` show
+  it; `identifiability` maps the profile chi^2 over the two tensions.
+
+inputs:
+  - id: profile
+    type: data
+    label: droplet profile
+    source: data/raw/td_reset2.xvg
+    description: >-
+      Two columns, r [nm] and z [nm]: height of the oil/monolayer interface
+      above the flat bilayer plane, assumed to be the upper half of an
+      up-down symmetric lens (total thickness 2 z(0)).
+  - id: paper
+    type: data
+    label: Deslandes et al. 2017 + SI
+    source: data/raw/deslandes_thiam_foret_2017_bpj.pdf
+    description: Letter and Supporting Material defining the free energy, shape equations and boundary conditions.
+  - id: lens_solver
+    type: data
+    source: src/lens.py
+    description: Shape-equation solver (SI Eq. 18) with axis series start, contact-line event and lens-branch selection.
+  - id: fitting_code
+    type: data
+    source: src/fitting.py
+    description: Least-squares model wrapper, initial grid search, derived physical quantities.
+  - id: validate_script
+    type: data
+    source: src/validate_solver.py
+  - id: fit_script
+    type: data
+    source: src/fit.py
+  - id: profile_script
+    type: data
+    source: src/fit_profile.py
+  - id: plot_script
+    type: data
+    source: src/plot_fit.py
+  - id: ident_script
+    type: data
+    source: src/identifiability.py
+
+outputs:
+  - id: solver_validation
+    type: figure
+    format: png
+    description: >-
+      Numerical lens branch vs SI small-volume formulas (Eqs. 31-34) and the
+      large-volume contact angle cos(psi_c) = gamma_b/(2 gamma_m) (Eq. 40), for
+      gamma_b/gamma_m = 0.1 and 1 (the paper's Fig. S2 values); also reports
+      the conserved Hamiltonian (Eq. 19).
+    inputs: [lens_solver, validate_script]
+    decisions: []
+    recipe:
+      command: python {inputs.validate_script} --g-values 0.1,1.0 --output {output}
+
+  - id: fit_params
+    type: metric
+    format: json
+    description: >-
+      Best-fit V, gamma_b/gamma_m, gamma_m, gamma_b (plus lambda_m, R, h,
+      pressure, contact angles), uncertainties and correlation matrix, fit quality.
+    inputs: [profile, lens_solver, fitting_code, fit_script]
+    decisions: [temperature, baseline, fit_range, uncertainty]
+    recipe:
+      command: >-
+        python {inputs.fit_script} --profile {inputs.profile} --kappa-kT 6
+        --temperature {decisions.temperature} --baseline {decisions.baseline}
+        --fit-range {decisions.fit_range} --uncertainty {decisions.uncertainty}
+        --output {output}
+
+  - id: fit_profile
+    type: table
+    format: csv
+    description: Best-fit model contour (s, r, z, psi, curvature) plus the flat bilayer, in nm.
+    inputs: [fit_params, lens_solver, profile_script]
+    decisions: []
+    recipe:
+      command: python {inputs.profile_script} --fit-params {inputs.fit_params} --output {output}
+
+  - id: fit_plot
+    type: figure
+    format: png
+    description: Data vs best-fit model with residuals and the fitted parameters.
+    inputs: [profile, fit_profile, fit_params, plot_script]
+    decisions: []
+    recipe:
+      command: >-
+        python {inputs.plot_script} --profile {inputs.profile}
+        --fit-profile {inputs.fit_profile} --fit-params {inputs.fit_params} --output {output}
+
+  - id: identifiability
+    type: figure
+    format: png
+    description: >-
+      Profile Delta-chi^2 over (gamma_m, gamma_b/gamma_m) within +-30% of the
+      best fit, apex curvature re-optimised at each node; contours of constant
+      2 gamma_m - gamma_b mark the small-volume degeneracy direction.
+    inputs: [profile, fit_params, lens_solver, fitting_code, ident_script]
+    decisions: [temperature, baseline, fit_range]
+    recipe:
+      command: >-
+        python {inputs.ident_script} --profile {inputs.profile} --fit-params {inputs.fit_params}
+        --kappa-kT 6 --temperature {decisions.temperature} --baseline {decisions.baseline}
+        --fit-range {decisions.fit_range} --n 25 --span 0.3 --procs 16 --output {output}
+      resources: {cpus: 16, memory: 8Gi}
+
+decisions:
+  temperature:
+    label: Temperature converting kappa_m = 6 kBT to joules
+    rationale: >-
+      kappa_m enters only through gamma_m = kappa_m / lambda_m^2, so both
+      tensions scale linearly with T (the fitted lengths do not). The
+      simulation temperature was not given; 310 K is the usual choice for
+      lipid-droplet simulations. Replace with the actual simulation T if known.
+    default: t310
+    options:
+      t310: { label: 310 K }
+      t298: { label: 298.15 K }
+  baseline:
+    label: Height of the bilayer plane
+    rationale: >-
+      The profile already sits at z ~ 0 beyond the contact line, so the plane
+      is fixed at zero by default; a free offset z0 absorbs a possible
+      reference shift at the cost of one parameter.
+    default: fixed
+    options:
+      fixed: { label: Bilayer plane fixed at z = 0 }
+      free: { label: Free vertical offset z0 }
+  fit_range:
+    label: Radial range included in the fit
+    rationale: >-
+      Beyond the contact line the model is exactly flat; the far tail (r >
+      40 nm) shows a slow drift down to -0.03 nm that is not droplet shape.
+      Keeping all points constrains R through the flat region; the cut
+      tests sensitivity to the tail.
+    default: all
+    options:
+      all: { label: All points (r up to 54 nm) }
+      r_le_40: { label: Only r <= 40 nm }
+  uncertainty:
+    label: Uncertainty estimate for the fitted parameters
+    rationale: >-
+      Both treat residuals as independent, while profile residuals are
+      correlated along r; the Jacobian estimate is fast, the bootstrap
+      captures non-linearity of the parameter map.
+    default: jacobian
+    options:
+      jacobian: { label: "Gaussian errors from the Jacobian, delta method for derived quantities" }
+      residual_bootstrap: { label: iid residual bootstrap (200 refits) }
