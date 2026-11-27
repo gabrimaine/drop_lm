@@ -5,13 +5,13 @@
   "recipe": "python src/validate_solver.py --g-values 0.1,1.0 --output results/baseline/solver_validation.png",
   "definition_version": "sha256:15290d9ce7f7f8c347e5c8b797da1a2bf9070dd8cc75bc9a4d93035f307834a8",
   "env_version": "sha256:5251d632a1324cd02186a0d88485c6f07b0b8bbf54760e1f1d57b15f44c6ecb5",
-  "data_version": "sha256:71e8f6679be651e7a98a294a396ec16a3e69966fb7838fb2c788c906cdbf6663",
+  "data_version": "sha256:c0fd42766479bec3e907970fc578b615789b6054bf5cec6937846d029ab66998",
   "decisions": {},
   "input_versions": {
-    "lens_solver": "sha256:be9e021d0fda4e52d73f73251321a2d81f701f5cb8149bf6306ea5fcd98bb12f",
+    "lens_solver": "sha256:314bb49cb40792b3d9bdeebbeb2bdd76ac709acdd646d9c62f00cf3ce06e8f22",
     "validate_script": "sha256:b1ba8e753d1b8ed429c8807e3837e739f9f8adaab8370e6ad002478244b97864"
   },
-  "git_sha": "ad2a1022595f741a0f67544c94b1bdc2fb0596ec",
+  "git_sha": "fae3bc21706208bae440814875011faece509403",
   "git_remote": "git@github.com:gabrimaine/drop_lm.git",
   "lc_version": "0.5.1",
   "hermeticity": {
@@ -21,8 +21,8 @@
     "landlock_abi": 5,
     "exec_allowlist_version": 1
   },
-  "started_at": "2026-11-27T11:51:33.940+00:00",
-  "finished_at": "2026-11-27T11:51:55.176+00:00",
+  "started_at": "2026-11-27T17:39:30.223+00:00",
+  "finished_at": "2026-11-27T17:39:47.041+00:00",
   "uv_version": "0.13.10",
   "image": null
 }
