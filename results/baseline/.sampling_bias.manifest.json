@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "output_id": "sampling_bias",
+  "universe_id": "baseline",
+  "recipe": "python src/sampling_bias.py --profile data/raw/td_reset2.xvg --fit-params results/baseline/fit_params.json --kappa-kT 6 --temperature t310 --baseline fixed --fit-range all --output results/baseline/sampling_bias.csv",
+  "definition_version": "sha256:a448758daefaf82dee30636f954f5ff0d320e8c0708ff13e2fa7de4cba4198e9",
+  "env_version": "sha256:5251d632a1324cd02186a0d88485c6f07b0b8bbf54760e1f1d57b15f44c6ecb5",
+  "data_version": "sha256:4ca76c2be19c342567383478d2415dea39990f034cb85a7baf8eccd195605c2f",
+  "decisions": {
+    "temperature": "t310",
+    "baseline": "fixed",
+    "fit_range": "all"
+  },
+  "input_versions": {
+    "profile": "sha256:b0dd20f8e97c9e373163b8c096434493890d72e5c57c03a711b5b2d481f7c220",
+    "fit_params": "sha256:2f6d7e890aa75fa8340312f2f6dbd7ab6ca93ca3aaabe70d919de74f9a553ed8",
+    "lens_solver": "sha256:314bb49cb40792b3d9bdeebbeb2bdd76ac709acdd646d9c62f00cf3ce06e8f22",
+    "fitting_code": "sha256:d5aa76abc08d20a31350e70a86e5fbbb56a0799e4e11e72c4a2c6a44df1c3604",
+    "old_sampling": "sha256:215363c9b8ec0f51d8943ba2c7a2c6e64bbc02a9a64ebcafea9015a6c1e4123f",
+    "sampling_bias_script": "sha256:89eaa3f6f6304940ea84f47c079901b273b6dd5e3fd4a9b6654ab359216d314f"
+  },
+  "git_sha": "fce16a8699cc3613e20005a27d6f99f29306e6e5",
+  "git_remote": "git@github.com:gabrimaine/drop_lm.git",
+  "lc_version": "0.5.1",
+  "hermeticity": {
+    "mechanism": "landlock",
+    "fs": "declared",
+    "network": "allowed",
+    "landlock_abi": 5,
+    "exec_allowlist_version": 1
+  },
+  "started_at": "2026-11-27T18:07:19.171+00:00",
+  "finished_at": "2026-11-27T18:08:15.482+00:00",
+  "uv_version": "0.13.10",
+  "image": null
+}
