@@ -15,7 +15,10 @@ description: >-
   psi_contact = 0). `solver_validation` checks the solver against the SI's
   analytic limits; `fit_params` is the fit; `fit_profile` and `fit_plot` show
   it; `identifiability` maps the profile chi^2 over the two tensions;
-  `fit_summary` flattens the fit into one row per quantity for the report.
+  `fit_summary` flattens the fit into one row per quantity for the report;
+  `cross_check` refits with an independent code (data/raw/compare_fit.py),
+  `sampling_bias` reruns the fit with the pre-fix contour sampling, and
+  `cross_check_plot` shows both comparisons.
 
 inputs:
   - id: profile
@@ -68,6 +71,19 @@ inputs:
   - id: cross_check_script
     type: data
     source: src/cross_check.py
+  - id: old_sampling
+    type: data
+    source: src/old_sampling.py
+    description: >-
+      The contour sampling of lens.shoot before fae3bc2 (steps capped at 0.05
+      lambda, linear interpolation between them), kept only to measure the
+      bias it caused.
+  - id: sampling_bias_script
+    type: data
+    source: src/sampling_bias.py
+  - id: cross_check_plot_script
+    type: data
+    source: src/plot_cross_check.py
 
 outputs:
   - id: solver_validation
@@ -153,8 +169,9 @@ outputs:
     description: >-
       The profile refitted by the independent code (other_code) from its own
       starting guesses, side by side with fit_params: one row per quantity
-      with both values, both 1-sigma errors and their difference in units of
-      our sigma.
+      with both values, both 1-sigma errors (the independent one as it reports
+      it and with all correlations) and their difference in units of our
+      sigma; plus both codes' reduced pressure and apex curvature.
     inputs: [profile, fit_params, other_code, cross_check_script]
     decisions: [temperature, baseline, fit_range]
     recipe:
@@ -164,6 +181,41 @@ outputs:
         --kappa-kT 6 --temperature {decisions.temperature} --baseline {decisions.baseline}
         --fit-range {decisions.fit_range} --procs 5 --output {output}
       resources: {cpus: 5, memory: 4Gi}
+
+  - id: sampling_bias
+    type: table
+    format: csv
+    description: >-
+      The fit rerun exactly as before fae3bc2, with the old 0.05-lambda contour
+      sampling (old_sampling), against fit_params: both values, both 1-sigma
+      errors and the shift in units of our sigma; plus the old sampling's
+      interpolation error at our best fit (max and rms, pm).
+    inputs: [profile, fit_params, lens_solver, fitting_code, old_sampling, sampling_bias_script]
+    decisions: [temperature, baseline, fit_range]
+    recipe:
+      command: >-
+        python {inputs.sampling_bias_script} --profile {inputs.profile}
+        --fit-params {inputs.fit_params} --kappa-kT 6 --temperature {decisions.temperature}
+        --baseline {decisions.baseline} --fit-range {decisions.fit_range} --output {output}
+
+  - id: cross_check_plot
+    type: figure
+    format: png
+    description: >-
+      Our fit against the independent code: both models on the data, both
+      residuals, the difference between the two models against the old
+      sampling's interpolation error, the differences of every quantity in
+      units of our sigma (now and with the old sampling), and the ratio of
+      the error bars with and without the correlations.
+    inputs: [profile, fit_params, cross_check, sampling_bias, other_code, lens_solver,
+             fitting_code, old_sampling, cross_check_plot_script]
+    decisions: [fit_range]
+    recipe:
+      command: >-
+        python {inputs.cross_check_plot_script} --profile {inputs.profile}
+        --fit-params {inputs.fit_params} --cross-check {inputs.cross_check}
+        --sampling-bias {inputs.sampling_bias} --other-code {inputs.other_code}
+        --fit-range {decisions.fit_range} --output {output}
 
 decisions:
   temperature:
@@ -451,20 +503,49 @@ findings:
       A separately written implementation of the same model, with its own
       shooting variable, parametrisation and starting guesses, converges to
       the same best fit. Every fitted and derived quantity agrees to within
-      0.01 of our quoted 1-sigma error, in every universe.
+      0.01 of our quoted 1-sigma error, in every universe, and the two best-fit
+      models differ by less than 0.01 pm at every data point. With the
+      correlations between its parameters included, its error bars match ours
+      to better than 1 %.
     created_at: "2026-11-27T18:00:00Z"
     evidence:
       - id: comparison
         artifact: cross_check
+      - id: figure
+        artifact: cross_check_plot
     scope: >-
       Both codes implement the symmetric model with the 1/2 in the
-      contact-line tension (see contact_tension_factor), so the check does
-      not test that reading of the Supporting Material.
+      contact-line tension (see contact_tension_factor), read the same profile
+      and assume the same kappa_m, so the check tests the numerics, not the
+      model or its reading of the Supporting Material.
     notes: >-
-      The first comparison, before fae3bc2, found differences of 0.3-0.4
-      sigma. They came from our solver sampling the contour every 0.05 lambda
-      and interpolating linearly, an error of up to 0.7 pm; it now samples the
-      integrator's continuous solution. The independent code's gamma_b error
-      ignores the correlation between its parameters and is about 10 %
-      smaller than ours.
+      As compare_fit.py reports it, its gamma_b error is about 10 % smaller
+      than ours, because it adds the lambda and gamma_b/gamma_m terms in
+      quadrature and so drops their strong correlation (rho = -0.87 between
+      lambda_m and gamma_b/gamma_m in our fit). Propagating its own
+      covariance with the correlation gives our value.
     tags: [method, result]
+
+  sampling_bias_caught:
+    label: The cross-check caught a 0.4-sigma sampling bias
+    claim: >-
+      Before fae3bc2 our solver read the model height off a contour sampled
+      every 0.05 lambda_m. The resulting interpolation error, at most 0.7 pm
+      against residuals of 8 pm, moved the best-fit tensions, lambda_m and R
+      by about 0.4 of their quoted sigma, and the tension ratio by about 0.3
+      sigma. Rerunning the old fit reproduces the archived pre-fix values
+      exactly; the independent code agrees with the fixed fit, not the old one.
+    created_at: "2026-11-27T21:00:00Z"
+    evidence:
+      - id: bias
+        artifact: sampling_bias
+      - id: figure
+        artifact: cross_check_plot
+    scope: >-
+      A bias well inside the statistical error, and much smaller than the
+      systematic error from the assumed kappa_m; it would not have changed any
+      conclusion, but it was a bias of the code, not of the data.
+    notes: >-
+      The old fit's Jacobian errors were also smaller, by about 10 % for the
+      tensions, lambda_m and R.
+    tags: [method]

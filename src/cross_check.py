@@ -11,7 +11,13 @@ compare_fit.py has no bilayer-plane offset. With a free baseline our fitted z0
 is subtracted from the data first, so both codes fit the same shape.
 
 Writes one row per quantity: ours, ours_std, other, other_std, diff_sigma =
-(other - ours) / ours_std, unit.
+(other - ours) / ours_std, unit. other_std is the error as compare_fit.py
+reports it; other_std_full propagates the same covariance with all the
+correlations (compare_fit.py adds the lambda and delta terms of gamma_b in
+quadrature, which drops their correlation). The rows pressure and
+apex_curvature are the two shooting variables, p lambda^3 / kappa_m and the apex
+curvature times lambda; with lambda and gamma_b/gamma_m they rebuild either
+shape exactly.
 """
 import argparse
 import csv
@@ -45,6 +51,26 @@ def _one_start(args):
         _load(path)
     res = C.fit_profile(r, z, [(th0, None)], verbose=False)
     return float(res.cost), res
+
+
+def _fmt(x):
+    return "" if x is None else repr(float(x))
+
+
+def _full_errors(cov, th, out):
+    """compare_fit's covariance in theta = (ln lam, logit(delta/2), ln pbar),
+    propagated to the tensions with all correlations (analytic gradients).
+    V, R and h are already propagated this way by compare_fit itself."""
+    lam, delta, gm = out["lam"], out["delta"], out["gamma_m"]
+    dd = delta * (1.0 - delta / 2.0)  # d delta / d theta_1
+    grads = {
+        "lambda_m": [lam, 0.0, 0.0],
+        "gamma_ratio": [0.0, -dd, 0.0],
+        "gamma_m": [-2.0 * gm, 0.0, 0.0],
+        "gamma_b": [-2.0 * (2.0 - delta) * gm, -gm * dd, 0.0],
+        "delta_gamma": [-2.0 * delta * gm, gm * dd, 0.0],
+    }
+    return {k: math.sqrt(max(float(np.array(g) @ cov @ np.array(g)), 0.0)) for k, g in grads.items()}
 
 
 def main():
@@ -81,8 +107,14 @@ def main():
     out = C.derived_outputs(prof, kappa)
     sig = C.parameter_errors(res, r, zc, kappa, prof)
 
+    full = _full_errors(sig["cov"], res.x, out)
+    full.update(V=sig["sig_V"], R=sig["sig_R"], h=2 * sig["sig_h"])
+
     b, s = ours["best_fit"], ours["uncertainty"]["sigma"]
     q = ours["fit_quality"]
+    lam_o = b["lambda_nm"]
+    P_ours = b["p_bar"] * 1e5 * (lam_o * 1e-9) ** 3 / kappa  # p lambda^3 / kappa_m
+    a_ours = b["apex_curvature_inv_nm"] * lam_o
     # quantity, label, unit, ours, ours_std, other, other_std
     rows = [
         ("V", "Droplet volume", "nm^3", b["V_nm3"], s["V_nm3"], out["V"], sig["sig_V"]),
@@ -103,16 +135,19 @@ def main():
          math.degrees(out["psi_max"]), None),
         ("rms", "RMS residual", "pm", 1e3 * q["rms_nm"], None,
          1e3 * float(np.sqrt(np.mean(resid ** 2))), None),
+        ("pressure", "Reduced pressure p lambda^3 / kappa_m", "", P_ours, None, out["pbar"], None),
+        ("apex_curvature", "Apex curvature times lambda_m", "", a_ours, None, out["u0"], None),
         ("z0_subtracted", "Bilayer-plane offset taken from our fit", "pm", 1e3 * z0, None, 1e3 * z0, None),
     ]
     with open(args.output, "w", newline="") as fh:
         w = csv.writer(fh)
-        w.writerow(["quantity", "label", "ours", "ours_std", "other", "other_std", "diff_sigma", "unit"])
+        w.writerow(["quantity", "label", "ours", "ours_std", "other", "other_std",
+                    "other_std_full", "diff_sigma", "unit"])
         for qid, label, unit, vo, so, vt, st in rows:
             d = (vt - vo) / so if so else None
-            w.writerow([qid, label, repr(float(vo)), "" if so is None else repr(float(so)),
-                        repr(float(vt)), "" if st is None else repr(float(st)),
-                        "" if d is None else repr(float(d)), unit])
+            sf = full.get(qid)
+            w.writerow([qid, label, repr(float(vo)), _fmt(so), repr(float(vt)), _fmt(st),
+                        _fmt(sf), _fmt(d), unit])
 
 
 if __name__ == "__main__":
