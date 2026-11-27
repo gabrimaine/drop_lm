@@ -5,7 +5,7 @@
   "recipe": "python src/identifiability.py --profile data/raw/td_reset2.xvg --fit-params results/baseline/fit_params.json --kappa-kT 6 --temperature t310 --baseline fixed --fit-range all --n 25 --span 0.3 --procs 16 --output results/baseline/identifiability.png",
   "definition_version": "sha256:0647069e0a692d0114aadc78dec91d8e7e5e81916b16bf3aece610ef12b66e19",
   "env_version": "sha256:5251d632a1324cd02186a0d88485c6f07b0b8bbf54760e1f1d57b15f44c6ecb5",
-  "data_version": "sha256:be0010c8fb6fb974fa552df398bb70f9410067aa126ef3116481f29a78862fd1",
+  "data_version": "sha256:feda24d1f5cb94b8a83955c099aad1ac24a5ed5749b4eb970fa987c69e9c78fb",
   "decisions": {
     "temperature": "t310",
     "baseline": "fixed",
@@ -13,12 +13,12 @@
   },
   "input_versions": {
     "profile": "sha256:b0dd20f8e97c9e373163b8c096434493890d72e5c57c03a711b5b2d481f7c220",
-    "fit_params": "sha256:0118e285701fc3ecabe8cc179617b4e8e2d1a6c6401681e4a47d8d467282b5c6",
-    "lens_solver": "sha256:be9e021d0fda4e52d73f73251321a2d81f701f5cb8149bf6306ea5fcd98bb12f",
+    "fit_params": "sha256:2f6d7e890aa75fa8340312f2f6dbd7ab6ca93ca3aaabe70d919de74f9a553ed8",
+    "lens_solver": "sha256:314bb49cb40792b3d9bdeebbeb2bdd76ac709acdd646d9c62f00cf3ce06e8f22",
     "fitting_code": "sha256:d5aa76abc08d20a31350e70a86e5fbbb56a0799e4e11e72c4a2c6a44df1c3604",
     "ident_script": "sha256:7e34034363a334f6b46ca6761df4a0ddd970c8e9b0a5b8040c577f63aecbce34"
   },
-  "git_sha": "ad2a1022595f741a0f67544c94b1bdc2fb0596ec",
+  "git_sha": "fae3bc21706208bae440814875011faece509403",
   "git_remote": "git@github.com:gabrimaine/drop_lm.git",
   "lc_version": "0.5.1",
   "hermeticity": {
@@ -28,8 +28,8 @@
     "landlock_abi": 5,
     "exec_allowlist_version": 1
   },
-  "started_at": "2026-11-27T11:52:40.792+00:00",
-  "finished_at": "2026-11-27T11:55:02.674+00:00",
+  "started_at": "2026-11-27T17:40:21.194+00:00",
+  "finished_at": "2026-11-27T17:42:46.631+00:00",
   "uv_version": "0.13.10",
   "image": null
 }
