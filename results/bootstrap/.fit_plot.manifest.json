@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "output_id": "fit_plot",
+  "universe_id": "bootstrap",
+  "recipe": "python src/plot_fit.py --profile data/raw/td_reset2.xvg --fit-profile results/bootstrap/fit_profile.csv --fit-params results/bootstrap/fit_params.json --output results/bootstrap/fit_plot.png",
+  "definition_version": "sha256:41262069dc8c13c2303edbeb3f596af0cfe3e99177a943116c700326e26ba483",
+  "env_version": "sha256:5251d632a1324cd02186a0d88485c6f07b0b8bbf54760e1f1d57b15f44c6ecb5",
+  "data_version": "sha256:d1dac6290bd0e6d33c77fbcc874574218d4a3b757c767264083acda4bc0574a2",
+  "decisions": {},
+  "input_versions": {
+    "profile": "sha256:b0dd20f8e97c9e373163b8c096434493890d72e5c57c03a711b5b2d481f7c220",
+    "fit_profile": "sha256:1d04e702bdfefab7d607f3876a56096ff226b5020ce5c730156c35ee93c007c0",
+    "fit_params": "sha256:0727ffefc63f09f8f0355551d4af57a92821a87d2cd5ee412dc3397189d7bb54",
+    "plot_script": "sha256:777eda6afafa0479403bd63f0d5a543eec77151bc5bca0f54f4d031cc839ae02"
+  },
+  "git_sha": "ce2556d9eb00107cab29c3da2cc5e562af7932af",
+  "git_remote": "git@github.com:gabrimaine/drop_lm.git",
+  "lc_version": "0.5.1",
+  "hermeticity": {
+    "mechanism": "landlock",
+    "fs": "declared",
+    "network": "allowed",
+    "landlock_abi": 5,
+    "exec_allowlist_version": 1
+  },
+  "started_at": "2026-11-27T13:06:32.366+00:00",
+  "finished_at": "2026-11-27T13:06:35.444+00:00",
+  "uv_version": "0.13.10",
+  "image": null
+}
