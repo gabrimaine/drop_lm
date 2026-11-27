@@ -80,7 +80,7 @@ A droplet between the two limits carries information on both.
 
 We integrate [](#eq-shape) in dimensionless form from a series expansion at the axis outward, with an 8th-order Runge–Kutta integrator [@virtanen2020]. The integration stops when $\psi$ first returns to zero. This is the shooting method of the Supporting Material {astra:cite}`prior_insights.shooting_method`. In the symmetric model only one unknown must be tuned for a given apex curvature: the pressure. We find it by root-bracketing [](#eq-contact), taking the single-valued lens branch.
 
-{astra:ref}`outputs.solver_validation` checks the solver against the paper's analytic limits ({astra}`findings.solver_validated`).
+[](#output-solver_validation) checks the solver against the paper's analytic limits ({astra}`findings.solver_validated`).
 
 :::{astra} outputs.solver_validation
 :caption: Solver against the analytic limits of the Supporting Material, for $\gamma_b/\gamma_m = 0.1$ and $1$. Top row: contact radius and thickness against SI Eqs. 33–34, and the largest computed shapes against a Laplace cap. Bottom row: maximum slope and apparent cap angle against the large-volume angle of SI Eq. 40, the small-volume profile against SI Eq. 31, and the curvature reaching the contact condition [](#eq-contact).
@@ -112,7 +112,7 @@ Four choices are declared in the analysis. Each is shown below with its rational
 
 ### The fit
 
-{astra:ref}`outputs.fit_plot` compares the best-fit lens with the data. The model follows the profile from the apex through the contact line to the flat bilayer. The rms residual is {astra:value col=value where="quantity=rms" sig=2}`outputs.fit_summary` pm over {astra:value col=value where="quantity=n_points" sig=3}`outputs.fit_summary` points, against a lens thickness of {astra:value col=value where="quantity=h" err=value_std sig=4}`outputs.fit_summary` nm. The largest residual is {astra:value col=value where="quantity=max_resid" sig=2}`outputs.fit_summary` pm. The residuals are not white: they oscillate slowly along $r$ and dip just outside the contact line, where the model's curvature jumps.
+[](#output-fit_plot) compares the best-fit lens with the data. The model follows the profile from the apex through the contact line to the flat bilayer. The rms residual is {astra:value col=value where="quantity=rms" sig=2}`outputs.fit_summary` pm over {astra:value col=value where="quantity=n_points" sig=3}`outputs.fit_summary` points, against a lens thickness of {astra:value col=value where="quantity=h" err=value_std sig=4}`outputs.fit_summary` nm. The largest residual is {astra:value col=value where="quantity=max_resid" sig=2}`outputs.fit_summary` pm. The residuals are not white: they oscillate slowly along $r$ and dip just outside the contact line, where the model's curvature jumps.
 
 :::{astra} outputs.fit_plot
 :caption: Measured profile (black) and its mirror image (grey) with the best-fit monolayer (red) and flat bilayer (blue). The dotted line marks the contact radius. Lower panel: residuals in picometres.
@@ -138,12 +138,12 @@ The reduced volume is $V/\lambda_m^3$ = {astra:value col=value where="quantity=V
 :::
 
 :::{dropdown} How the uncertainties should be read
-Both uncertainty methods treat the residuals as independent. The residuals in {astra:ref}`outputs.fit_plot` are visibly correlated along $r$, so the quoted errors are lower bounds. The *z0-free* tab in [](#sec-universes) gives a better sense of the systematic error on the tensions: it shifts them by roughly one quoted σ. None of the choices moves the ratio or the volume appreciably.
+Both uncertainty methods treat the residuals as independent. The residuals in [](#output-fit_plot) are visibly correlated along $r$, so the quoted errors are lower bounds. The *z0-free* tab in [](#sec-universes) gives a better sense of the systematic error on the tensions: it shifts them by roughly one quoted σ. None of the choices moves the ratio or the volume appreciably.
 :::
 
 ### Are the two tensions separately determined?
 
-At a small reduced volume only $\Delta\gamma$ would be measurable {astra:cite}`prior_insights.small_volume_degeneracy`. {astra:ref}`outputs.identifiability` maps the profile $\Delta\chi^2$ over $(\gamma_m, \gamma_b/\gamma_m)$, re-optimising the apex curvature at each node. The minimum is closed and does not run along the dash-dotted lines of constant $\Delta\gamma$. Instead, the valley stretches along $\gamma_m$ at almost fixed ratio. The profile pins the ratio more tightly than either tension, but it does constrain both.
+At a small reduced volume only $\Delta\gamma$ would be measurable {astra:cite}`prior_insights.small_volume_degeneracy`. [](#output-identifiability) maps the profile $\Delta\chi^2$ over $(\gamma_m, \gamma_b/\gamma_m)$, re-optimising the apex curvature at each node. The minimum is closed and does not run along the dash-dotted lines of constant $\Delta\gamma$. Instead, the valley stretches along $\gamma_m$ at almost fixed ratio. The profile pins the ratio more tightly than either tension, but it does constrain both.
 
 :::{astra} outputs.identifiability
 :caption: Profile $\Delta\chi^2$ around the best fit (star), with residual scale taken from the best fit. Dashed: $\Delta\chi^2$ contours. Dash-dotted: lines of constant $2\gamma_m-\gamma_b$, the degeneracy direction of the small-volume limit.

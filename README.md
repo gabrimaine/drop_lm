@@ -28,7 +28,7 @@ record of how each result was made) is in this repository.
 2. [Get the repository and its files](#2-get-the-repository-and-its-files)
 3. [Explore the results (no Lightcone needed)](#3-explore-the-results-no-lightcone-needed)
 4. [The analysis choices ("decisions") and "universes"](#4-the-analysis-choices-decisions-and-universes)
-5. [Browse interactively with the Lightcone viewer](#5-browse-interactively-with-the-lightcone-viewer)
+5. [Browse interactively: the Lightcone viewer and the report](#5-browse-interactively-the-lightcone-viewer-and-the-report)
 6. [Recompute the results](#6-recompute-the-results)
 7. [Fit your own curve](#7-fit-your-own-curve)
 8. [The physics in one page](#8-the-physics-in-one-page)
@@ -48,15 +48,17 @@ src/                the Python code (solver, fit, plots)
 data/raw/           the measured profile (td_reset2.xvg) and the paper (PDF)
 pyproject.toml,     the Python environment (numpy, scipy, matplotlib),
 uv.lock             pinned exactly
-index.md, myst.yml  skeleton of a MyST report (not written yet)
+index.md, myst.yml  the report, written as a short paper (MyST); see Section 5
+references.bib      its bibliography
 AGENTS.md           working notes for the AI assistant that built this
 ```
 
-Each universe directory contains the same five outputs:
+Each universe directory contains the same six outputs:
 
 | File | What it is |
 |---|---|
 | `fit_params.json` | **The answer.** Best-fit V, γ_b/γ_m, γ_m, γ_b and derived quantities (contact radius R, thickness h, λ_m, pressure, contact angles), their uncertainties and correlation matrix, and fit-quality numbers. |
+| `fit_summary.csv` | The same numbers as a flat table, one row per quantity: `quantity, label, value, value_std, unit`. The report reads its numbers from here. |
 | `fit_plot.png` | Data vs best-fit shape, residuals, and the fitted values. |
 | `fit_profile.csv` | The best-fit model contour: columns `s_nm, r_nm, z_nm, psi_deg, dpsi_ds_inv_nm, is_bilayer` (arclength, position, tangent angle, curvature; `is_bilayer = 1` marks the flat bilayer beyond the contact line). |
 | `identifiability.png` | χ² map over (γ_m, γ_b/γ_m): shows that this profile constrains *both* tensions, not just a combination of them. |
@@ -217,7 +219,7 @@ the code.
 
 ---
 
-## 5. Browse interactively with the Lightcone viewer
+## 5. Browse interactively: the Lightcone viewer and the report
 
 ```bash
 uv tool install lightcone-cli==0.5.1   # once
@@ -240,6 +242,29 @@ ssh -L 8889:localhost:8889 <remote-host>   # use the port and host that lc view 
 ```
 
 then open the printed URL locally.
+
+### Read the report
+
+`index.md` is a short paper about the analysis: model, method, results and
+discussion, with a bibliography (`references.bib`). It contains no typed-in
+numbers. Every value, figure and decision is pulled from `astra.yaml` and
+`results/` when the page is built, so it stays in step with the analysis.
+To view it you need Node.js 20 or newer and the MyST CLI:
+
+```bash
+npm install -g mystmd        # once
+myst start                   # live preview; prints the URL (port 3000 or the next free one)
+myst build --html            # or a static site in _build/html/
+```
+
+The plugin (MySTRA v0.0.8) and the theme (astra-article-theme v0.0.16) are
+pinned in `myst.yml` and downloaded on the first build. Run `myst build`
+(plain) to see reference problems. They are printed as lines starting with
+`⛔️`, and the build still exits 0.
+
+The report shows the first universe in `universes/` (`baseline`). The section
+"Changing the analysis choices" has one tab per universe with that
+universe's own fit plot. For other combinations, use `lc view`.
 
 ---
 
@@ -310,6 +335,7 @@ uv run python src/fit_profile.py --fit-params $OUT/fit_params.json --output $OUT
 uv run python src/plot_fit.py --profile data/raw/td_reset2.xvg \
     --fit-profile $OUT/fit_profile.csv --fit-params $OUT/fit_params.json \
     --output $OUT/fit_plot.png
+uv run python src/summarize.py --fit-params $OUT/fit_params.json --output $OUT/fit_summary.csv
 echo $OUT
 ```
 
