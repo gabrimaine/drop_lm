@@ -14,7 +14,8 @@ description: >-
   kappa_m u(R)^2 = 2 gamma_m - gamma_b for the symmetric lens (flat bilayer,
   psi_contact = 0). `solver_validation` checks the solver against the SI's
   analytic limits; `fit_params` is the fit; `fit_profile` and `fit_plot` show
-  it; `identifiability` maps the profile chi^2 over the two tensions.
+  it; `identifiability` maps the profile chi^2 over the two tensions;
+  `fit_summary` flattens the fit into one row per quantity for the report.
 
 inputs:
   - id: profile
@@ -53,6 +54,9 @@ inputs:
   - id: ident_script
     type: data
     source: src/identifiability.py
+  - id: summary_script
+    type: data
+    source: src/summarize.py
 
 outputs:
   - id: solver_validation
@@ -120,6 +124,18 @@ outputs:
         --fit-range {decisions.fit_range} --n 25 --span 0.3 --procs 16 --output {output}
       resources: {cpus: 16, memory: 8Gi}
 
+  - id: fit_summary
+    type: table
+    format: csv
+    description: >-
+      Long table of the fitted and derived quantities (one row per quantity:
+      value, 1-sigma uncertainty where available, unit), flattened from
+      fit_params for the report.
+    inputs: [fit_params, summary_script]
+    decisions: []
+    recipe:
+      command: python {inputs.summary_script} --fit-params {inputs.fit_params} --output {output}
+
 decisions:
   temperature:
     label: Temperature converting kappa_m = 6 kBT to joules
@@ -163,3 +179,228 @@ decisions:
     options:
       jacobian: { label: "Gaussian errors from the Jacobian, delta method for derived quantities" }
       residual_bootstrap: { label: iid residual bootstrap (200 refits) }
+
+prior_insights:
+  monolayer_rigidity:
+    label: Monolayer bending rigidity
+    claim: >-
+      Lipid monolayer bending rigidities are of order 2-10 x 10^-20 J, i.e. a
+      few kBT; kappa_m = 6 kBT sits inside that range.
+    created_at: "2026-11-27T13:30:00Z"
+    evidence:
+      - id: si_sect1
+        doi: "10.1016/j.bpj.2017.05.045"
+        quote:
+          exact: "The bending rigidity of the monolayers is of the order"
+    scope: Supporting Material Sect. 1; value taken from Marsh (2006).
+    tags: [parameters]
+
+  tension_scale:
+    label: Expected tension scale
+    claim: >-
+      The interfacial tensions of a forming lipid droplet are expected to be
+      of order 10^-3 N/m, so 1 mN/m is the natural starting guess for the fit.
+    created_at: "2026-11-27T13:30:00Z"
+    evidence:
+      - id: si_sect1
+        doi: "10.1016/j.bpj.2017.05.045"
+        quote:
+          exact: "We can thus expect the interfacial tensions of the forming LD are of the order of"
+        location: { page: 6 }
+    tags: [parameters]
+
+  symmetric_reduction:
+    label: Symmetric lens model
+    claim: >-
+      The paper's minimal model takes the two monolayers identical, with equal
+      pressures on both sides of the bilayer. The bilayer then stays flat with
+      zero contact angle, so only one unknown initial condition has to be
+      shot for.
+    created_at: "2026-11-27T13:30:00Z"
+    evidence:
+      - id: simplest_model
+        doi: "10.1016/j.bpj.2017.05.045"
+        quote:
+          exact: "We thus use the simplest model, neglecting sub-dominant contributions."
+        location: { page: 12 }
+      - id: one_condition
+        doi: "10.1016/j.bpj.2017.05.045"
+        quote:
+          exact: "In the particular case of the symmetrical model discussed in this letter, for the symmetrical shape, the computation can be much accelerated since the membrane b is"
+        location: { page: 12 }
+    scope: Supporting Material Sects. 4-5, Eq. 27.
+    tags: [model]
+
+  three_params:
+    label: Three dimensionless parameters
+    claim: >-
+      In units of lambda_m = sqrt(kappa_m/gamma_m) the symmetric shape depends
+      only on V/lambda_m^3, gamma_b/gamma_m and kappa_b/kappa_m. The bilayer
+      rigidity drops out when the bilayer is flat, so a profile fixes two shape
+      parameters plus a length scale. Converting the length scale into tensions
+      requires an assumed kappa_m.
+    created_at: "2026-11-27T13:30:00Z"
+    evidence:
+      - id: si_sect5
+        doi: "10.1016/j.bpj.2017.05.045"
+        quote:
+          exact: "one obtains that the LD shape is controlled by three dimensionless parameters"
+    derived: true
+    notes: >-
+      The statement that kappa_b drops out for a flat bilayer is our reading of
+      Eq. 18 with psi_b = 0; the paper lists all three parameters.
+    tags: [model, identifiability]
+
+  shooting_method:
+    label: Shooting method
+    claim: >-
+      The shape equations are boundary-value problems with conditions at both
+      ends of the contour, so they are solved by shooting: the unknown initial
+      conditions are tuned until the far-end boundary conditions are met.
+    created_at: "2026-11-27T13:30:00Z"
+    evidence:
+      - id: si_sect4
+        doi: "10.1016/j.bpj.2017.05.045"
+        quote:
+          exact: "the unknown initial conditions are tuned until the obtained shape"
+        location: { page: 11 }
+    tags: [method]
+
+  small_volume_degeneracy:
+    label: Small-volume degeneracy
+    claim: >-
+      For V/lambda^3 << 1 the contact radius and thickness depend on the
+      tensions only through Delta gamma = 2 gamma_m - gamma_b (SI Eqs. 33-34).
+      The two tensions are therefore not separately identifiable from a small
+      droplet.
+    created_at: "2026-11-27T13:30:00Z"
+    evidence:
+      - id: si_sect6_balance
+        doi: "10.1016/j.bpj.2017.05.045"
+        quote:
+          exact: "the balance of the forces due to the bending rigidities, favoring droplet spreading"
+        location: { page: 12 }
+      - id: si_sect6_accuracy
+        doi: "10.1016/j.bpj.2017.05.045"
+        quote:
+          exact: "are very accurate even when the volume is not much smaller than"
+        location: { page: 13 }
+    derived: true
+    notes: >-
+      The non-identifiability is our consequence of Eqs. 33-34, not a statement
+      made in the paper. It is why the identifiability map is drawn against
+      contours of constant 2 gamma_m - gamma_b.
+    tags: [identifiability]
+
+  large_volume_caps:
+    label: Large-volume limit
+    claim: >-
+      For V >> lambda^3 the lens becomes two apposed spherical caps whose
+      half-angle obeys cos(psi_c) = gamma_b / (2 gamma_m). The tension ratio
+      then sets the shape directly.
+    created_at: "2026-11-27T13:30:00Z"
+    evidence:
+      - id: letter
+        doi: "10.1016/j.bpj.2017.05.045"
+        quote:
+          exact: "In this regime, the LD shape consists of two apposed spherical caps forming an opening angle"
+        location: { page: 2 }
+      - id: si_sect7
+        doi: "10.1016/j.bpj.2017.05.045"
+        quote:
+          exact: "The droplet spreading decreases when"
+        location: { page: 14 }
+    tags: [identifiability, model]
+
+  contact_tension_factor:
+    label: Contact-line tension
+    claim: >-
+      The contact-line force balance closes the problem. In the symmetric lens
+      it reduces to kappa_m u(R)^2 = 2 gamma_m - gamma_b, where u is the
+      monolayer curvature at the contact line.
+    created_at: "2026-11-27T13:30:00Z"
+    evidence:
+      - id: si_sect6
+        doi: "10.1016/j.bpj.2017.05.045"
+        quote:
+          exact: "one obtains ti(R) = γiR−κiRui(R)2 at the contact line"
+        location: { page: 12 }
+    derived: true
+    notes: >-
+      The SI writes t_i(R) = gamma_i R - kappa_i R u_i(R)^2. Evaluating the
+      conserved Hamiltonian of SI Eq. 19 at the contact line gives a factor
+      1/2 on the curvature term, t_i = gamma_i R - (kappa_i/2) R u_i^2, and
+      the solver uses that form. Only this form is consistent with the SI's
+      own small-volume result: inserting Eq. 30 and the R of Eq. 33 gives
+      kappa_c u(R)^2 = Delta gamma exactly, which is the force balance
+      2 t_c - t_b = 0 with the 1/2. The printed form would give
+      2 kappa_c u(R)^2 = Delta gamma. The solver_validation output
+      reproduces Eqs. 31-34 with the 1/2.
+    tags: [model]
+
+findings:
+  solver_validated:
+    label: Solver validated
+    claim: >-
+      The shooting solver reproduces the paper's small-volume formulas
+      (Eqs. 31-34) as V/lambda^3 -> 0 and the large-volume contact angle
+      (Eq. 40) as V/lambda^3 grows, for gamma_b/gamma_m = 0.1 and 1. The
+      Hamiltonian of Eq. 19 is conserved along the contour.
+    created_at: "2026-11-27T13:30:00Z"
+    evidence:
+      - id: validation
+        artifact: solver_validation
+    tags: [method]
+
+  model_reproduces_profile:
+    label: Model fits the profile
+    claim: >-
+      The symmetric lens model, with three free parameters, describes the
+      measured profile to a few-picometre rms residual over the whole radial
+      range, including the flat bilayer beyond the contact line.
+    created_at: "2026-11-27T13:30:00Z"
+    evidence:
+      - id: plot
+        artifact: fit_plot
+      - id: params
+        artifact: fit_summary
+    scope: Up-down symmetric lens, flat bilayer, kappa_m = 6 kBT, tau = C0 = 0.
+    tags: [result]
+
+  tensions_separable:
+    label: Tensions are separately determined
+    claim: >-
+      The droplet sits in the intermediate regime (V/lambda_m^3 of a few
+      hundred), between the small-volume limit and the spherical-cap limit.
+      The profile therefore constrains gamma_m and gamma_b/gamma_m
+      individually: the chi^2 valley is closed rather than running along
+      constant 2 gamma_m - gamma_b.
+    created_at: "2026-11-27T13:30:00Z"
+    evidence:
+      - id: map
+        artifact: identifiability
+      - id: params
+        artifact: fit_summary
+    notes: >-
+      The absolute tensions scale with the assumed kappa_m (they are
+      kappa_m / lambda_m^2 times dimensionless numbers). The volume and the
+      ratio gamma_b/gamma_m do not depend on it.
+    tags: [result, identifiability]
+
+  robust_to_choices:
+    label: Robust to analysis choices
+    claim: >-
+      Each one-change universe (temperature, free baseline, fit range,
+      bootstrap errors) moves V and gamma_b/gamma_m by less than 0.1 %.
+      The tensions move by about 1 % with a free baseline (comparable to the
+      statistical error) and by the ratio of temperatures when kappa_m is
+      converted at 298 K.
+    created_at: "2026-11-27T13:30:00Z"
+    evidence:
+      - id: params
+        artifact: fit_summary
+    notes: >-
+      The quoted 1-sigma errors assume independent residuals and are lower
+      bounds. The free-baseline shift is the better guide to the systematic
+      uncertainty of the tensions.
+    tags: [result, robustness]
